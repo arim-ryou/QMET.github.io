@@ -1,53 +1,43 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LAB — Towards a new synthesis of research and innovation</title>
+    <title>QMET</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --color-bg: #0a0a0a;
+            --color-text: #f5f5f5;
+            --color-text-muted: #888888;
+            --color-accent: #e8e8e8;
+            --font-serif: 'Instrument Serif', Georgia, serif;
+            --font-sans: 'DM Sans', -apple-system, sans-serif;
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
-        :root {
-            --bg-primary: #fafafa;
-            --bg-secondary: #f0f0f0;
-            --text-primary: #0a0a0a;
-            --text-secondary: #666666;
-            --border-color: #e0e0e0;
-            --hover-bg: #f0f0f0;
-            --gradient-overlay: rgba(0,0,0,0.03);
-            --accent-color: #0066ff;
-        }
-
-        [data-theme="dark"] {
-            --bg-primary: #0a0a0a;
-            --bg-secondary: #1a1a1a;
-            --text-primary: #f5f5f5;
-            --text-secondary: #6b6b6b;
-            --border-color: #2a2a2a;
-            --hover-bg: #1a1a1a;
-            --gradient-overlay: rgba(255,255,255,0.02);
-            --accent-color: #4d94ff;
-        }
-
         html {
-            font-size: 16px;
             scroll-behavior: smooth;
         }
 
         body {
-            background-color: var(--bg-primary);
-            color: var(--text-primary);
-            font-family: 'Space Mono', monospace;
-            line-height: 1.5;
-            min-height: 100vh;
-            transition: background-color 0.3s ease, color 0.3s ease;
+            font-family: var(--font-sans);
+            background-color: var(--color-bg);
+            color: var(--color-text);
+            line-height: 1.6;
+            font-weight: 300;
+            overflow-x: hidden;
+        }
+
+        body.no-scroll {
+            overflow: hidden;
         }
 
         a {
@@ -60,34 +50,19 @@
             opacity: 0.6;
         }
 
-        /* Theme Toggle Button */
-        .theme-toggle {
-            position: fixed;
-            bottom: 2rem;
-            right: 2rem;
+        /* Skip Link */
+        .skip-link {
+            position: absolute;
+            top: -100%;
+            left: 0;
+            background: var(--color-text);
+            color: var(--color-bg);
+            padding: 1rem;
             z-index: 1000;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background-color: var(--text-primary);
-            color: var(--bg-primary);
-            border: none;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.25rem;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
         }
 
-        .theme-toggle:hover {
-            transform: scale(1.1);
-            box-shadow: 0 6px 16px rgba(0,0,0,0.2);
-        }
-
-        .theme-toggle:active {
-            transform: scale(0.95);
+        .skip-link:focus {
+            top: 0;
         }
 
         /* Header */
@@ -97,1250 +72,2588 @@
             left: 0;
             right: 0;
             z-index: 100;
-            padding: 1.5rem 2rem;
+            padding: 2rem 3rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: linear-gradient(to bottom, var(--bg-primary) 0%, var(--bg-primary) 50%, transparent 100%);
-            transition: background 0.3s ease;
+            mix-blend-mode: difference;
         }
 
         .logo {
-            font-family: 'Syne', sans-serif;
-            font-weight: 800;
+            font-family: var(--font-serif);
             font-size: 1.25rem;
             letter-spacing: -0.02em;
-            text-transform: lowercase;
         }
 
         nav {
             display: flex;
-            gap: 2.5rem;
+            gap: 3rem;
         }
 
-        nav a {
+        nav a, nav button {
+            font-size: 0.875rem;
+            font-weight: 400;
+            letter-spacing: 0.02em;
+            background: none;
+            border: none;
+            color: var(--color-text);
+            cursor: pointer;
+            font-family: var(--font-sans);
+            transition: opacity 0.3s ease;
+        }
+
+        nav a:hover, nav button:hover {
+            opacity: 0.6;
+        }
+
+        .header-toggle {
+            font-size: 0.875rem;
+            background: none;
+            border: none;
+            color: var(--color-text);
+            cursor: pointer;
+            font-family: var(--font-sans);
+            transition: opacity 0.3s ease;
+        }
+
+        .header-toggle:hover {
+            opacity: 0.6;
+        }
+
+        /* Menu Toggle */
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--color-text);
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-family: var(--font-sans);
+        }
+
+        /* ==================== */
+        /* OVERLAY BASE STYLES  */
+        /* ==================== */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--color-bg);
+            z-index: 200;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+            overflow-y: auto;
+        }
+
+        .overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .overlay-close {
+            position: fixed;
+            top: 2rem;
+            right: 3rem;
+            background: none;
+            border: none;
+            color: var(--color-text);
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-family: var(--font-sans);
+            z-index: 201;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: opacity 0.3s ease;
+        }
+
+        .overlay-close:hover {
+            opacity: 0.6;
+        }
+
+        .overlay-close svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        .overlay-content {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 8rem 3rem 4rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 0.6s ease 0.2s, transform 0.6s ease 0.2s;
+        }
+
+        .overlay.active .overlay-content {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .overlay-header {
+            margin-bottom: 4rem;
+        }
+
+        .overlay-title {
+            font-family: var(--font-serif);
+            font-size: clamp(3rem, 8vw, 6rem);
+            font-weight: 400;
+            line-height: 1.1;
+            letter-spacing: -0.03em;
+            margin-bottom: 1.5rem;
+        }
+
+        .overlay-title em {
+            font-style: italic;
+        }
+
+        .overlay-subtitle {
+            font-size: 1.125rem;
+            color: var(--color-text-muted);
+            max-width: 600px;
+            line-height: 1.7;
+        }
+
+        .overlay-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6rem;
+            margin-top: 2rem;
+        }
+
+        .overlay-grid.single-column {
+            grid-template-columns: 1fr;
+            max-width: 800px;
+        }
+
+        .overlay-section {
+            margin-bottom: 3rem;
+        }
+
+        .overlay-section h3 {
+            font-family: var(--font-sans);
             font-size: 0.75rem;
-            text-transform: lowercase;
-            letter-spacing: 0.05em;
+            font-weight: 500;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+            color: var(--color-text-muted);
         }
 
-        /* Hero */
+        .overlay-section p {
+            font-size: 1rem;
+            line-height: 1.8;
+            color: var(--color-text);
+            margin-bottom: 1rem;
+        }
+
+        .overlay-section ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .overlay-section li {
+            font-size: 1rem;
+            line-height: 2;
+            color: var(--color-text-muted);
+            padding-left: 1rem;
+            position: relative;
+        }
+
+        .overlay-section li::before {
+            content: '—';
+            position: absolute;
+            left: 0;
+            color: var(--color-text-muted);
+            opacity: 0.5;
+        }
+
+        /* Team Grid */
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 3rem;
+            margin-top: 2rem;
+        }
+
+        .team-member {
+            text-align: center;
+        }
+
+        .team-photo {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            object-fit: cover;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+        }
+
+        .team-member h4 {
+            font-family: var(--font-serif);
+            font-size: 1.5rem;
+            font-weight: 400;
+            margin-bottom: 0.5rem;
+        }
+
+        .team-member .role {
+            font-size: 0.875rem;
+            color: var(--color-text-muted);
+            margin-bottom: 0.5rem;
+        }
+
+        .team-member .email {
+            font-size: 0.8125rem;
+            color: var(--color-text-muted);
+        }
+
+        .team-member .email a:hover {
+            color: var(--color-text);
+            opacity: 1;
+        }
+
+        /* Professor Photo Styles */
+        .professor-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 3rem;
+        }
+
+        .professor-photo-wrapper {
+            flex-shrink: 0;
+        }
+
+        .professor-photo {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            object-fit: cover;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+        }
+
+        .professor-header-text {
+            flex: 1;
+        }
+
+        @media (max-width: 768px) {
+            .professor-header {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+
+            .professor-photo {
+                width: 160px;
+                height: 160px;
+            }
+
+            .professor-header-text .overlay-subtitle {
+                max-width: 100%;
+            }
+        }
+
+        /* Publication List */
+        .publication-list {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .publication-item {
+            padding-bottom: 2rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .publication-item:last-child {
+            border-bottom: none;
+        }
+
+        .publication-year {
+            font-size: 0.75rem;
+            font-weight: 500;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--color-text-muted);
+            margin-bottom: 0.75rem;
+        }
+
+        .publication-title {
+            font-family: var(--font-serif);
+            font-size: 1.25rem;
+            font-weight: 400;
+            margin-bottom: 0.5rem;
+            line-height: 1.4;
+        }
+
+        .publication-authors {
+            font-size: 0.9375rem;
+            color: var(--color-text-muted);
+            margin-bottom: 0.5rem;
+        }
+
+        .publication-journal {
+            font-size: 0.875rem;
+            color: var(--color-text-muted);
+            font-style: italic;
+        }
+
+        /* Activity Timeline */
+        .activity-timeline {
+            position: relative;
+            padding-left: 2rem;
+        }
+
+        .activity-timeline::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 1px;
+            background: rgba(255,255,255,0.1);
+        }
+
+        .activity-item {
+            position: relative;
+            padding-bottom: 2.5rem;
+        }
+
+        .activity-item::before {
+            content: '';
+            position: absolute;
+            left: -2rem;
+            top: 0.5rem;
+            width: 8px;
+            height: 8px;
+            background: var(--color-text);
+            border-radius: 50%;
+            transform: translateX(-50%);
+        }
+
+        .activity-date {
+            font-size: 0.75rem;
+            font-weight: 500;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--color-text-muted);
+            margin-bottom: 0.5rem;
+        }
+
+        .activity-title {
+            font-family: var(--font-serif);
+            font-size: 1.25rem;
+            font-weight: 400;
+            margin-bottom: 0.5rem;
+        }
+
+        .activity-description {
+            font-size: 0.9375rem;
+            color: var(--color-text-muted);
+            line-height: 1.7;
+        }
+
+        /* Activity Card & Carousel Styles */
+        .activity-list {
+            display: flex;
+            flex-direction: column;
+            gap: 4rem;
+            max-width: 900px;
+        }
+
+        .activity-card {
+            padding-bottom: 4rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            position: relative;
+        }
+
+        .activity-card:last-child {
+            border-bottom: none;
+        }
+
+        /* Clickable News Card Styles */
+        .activity-card.has-news {
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .activity-card.has-news:hover {
+            transform: translateX(8px);
+        }
+
+        .activity-card.has-news .activity-card-header {
+            position: relative;
+        }
+
+        /* News Badge */
+        .news-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 0.4rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            letter-spacing: 0.05em;
+            color: var(--color-text);
+            margin-bottom: 1rem;
+            transition: background 0.3s ease, border-color 0.3s ease;
+        }
+
+        .activity-card.has-news:hover .news-badge {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .news-badge svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        .news-badge span {
+            text-transform: uppercase;
+        }
+
+        /* Arrow indicator for news cards */
+        .news-arrow {
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            opacity: 0;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            color: var(--color-text-muted);
+        }
+
+        .activity-card.has-news:hover .news-arrow {
+            opacity: 1;
+            transform: translateY(-50%) translateX(4px);
+        }
+
+        .news-arrow svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        .activity-card-header {
+            margin-bottom: 2rem;
+        }
+
+        .activity-card .activity-date {
+            font-size: 0.75rem;
+            font-weight: 500;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--color-text-muted);
+            margin-bottom: 0.5rem;
+        }
+
+        .activity-card .activity-title {
+            font-family: var(--font-serif);
+            font-size: 1.5rem;
+            font-weight: 400;
+            margin-bottom: 0.75rem;
+        }
+
+        .activity-card .activity-description {
+            font-size: 0.9375rem;
+            color: var(--color-text-muted);
+            line-height: 1.7;
+            max-width: 600px;
+        }
+
+        .activity-carousel {
+            position: relative;
+            overflow: hidden;
+            width: 100%;
+        }
+
+        .carousel-track {
+            display: flex;
+            gap: 1rem;
+            animation: carouselScroll 20s linear infinite;
+        }
+
+        .carousel-slide {
+            flex: 0 0 calc(33.333% - 0.67rem);
+            min-width: calc(33.333% - 0.67rem);
+        }
+
+        .carousel-slide img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 4px;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+        }
+
+        @keyframes carouselScroll {
+            0% {
+                transform: translateX(0);
+            }
+            100% {
+                transform: translateX(calc(-100% - 15rem));
+            }
+        }
+
+        .activity-carousel:hover .carousel-track {
+            animation-play-state: paused;
+        }
+
+        @media (max-width: 768px) {
+            .carousel-slide {
+                flex: 0 0 calc(50% - 0.5rem);
+                min-width: calc(50% - 0.5rem);
+            }
+
+            .carousel-slide img {
+                height: 150px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .carousel-slide {
+                flex: 0 0 100%;
+                min-width: 100%;
+            }
+        }
+
+        /* Research Areas */
+        .research-areas {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .research-card {
+            padding: 2rem;
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.05);
+            transition: border-color 0.3s ease, background 0.3s ease;
+        }
+
+        .research-card:hover {
+            border-color: rgba(255,255,255,0.15);
+            background: rgba(255,255,255,0.04);
+        }
+
+        .research-card h4 {
+            font-family: var(--font-serif);
+            font-size: 1.5rem;
+            font-weight: 400;
+            margin-bottom: 1rem;
+        }
+
+        .research-card p {
+            font-size: 0.9375rem;
+            color: var(--color-text-muted);
+            line-height: 1.7;
+        }
+
+        .research-card-image {
+            width: 100%;
+            height: 180px;
+            overflow: hidden;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            background: var(--color-surface);
+        }
+
+        .research-card-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .research-card:hover .research-card-image img {
+            transform: scale(1.05);
+        }
+
+        /* Dark mode adjustment */
+        [data-theme="dark"] .research-card-image {
+            background: var(--color-surface-dark);
+        }
+
+        .research-card-gallery {
+            margin-bottom: 1rem;
+        }
+
+        .gallery-main {
+            width: 100%;
+            height: 180px;
+            overflow: hidden;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            background: var(--color-surface);
+            cursor: pointer;
+        }
+
+        .gallery-main img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .gallery-main:hover img {
+            transform: scale(1.05);
+        }
+
+        .gallery-thumbs {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .gallery-thumbs img {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 4px;
+            cursor: pointer;
+            opacity: 0.7;
+            transition: opacity 0.2s ease, transform 0.2s ease;
+            border: 2px solid transparent;
+        }
+
+        .gallery-thumbs img:hover {
+            opacity: 1;
+            transform: scale(1.1);
+        }
+
+        .gallery-thumbs img.active {
+            opacity: 1;
+            border-color: var(--color-accent);
+        }
+
+        /* ==================== */
+        /* LIGHTBOX             */
+        /* ==================== */
+        .lightbox {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .lightbox.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .lightbox-close {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            width: 44px;
+            height: 44px;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s ease, transform 0.2s ease;
+            z-index: 10001;
+        }
+
+        .lightbox-close:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.1);
+        }
+
+        .lightbox-close svg {
+            width: 20px;
+            height: 20px;
+            color: white;
+        }
+
+        .lightbox-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 50px;
+            height: 50px;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s ease, transform 0.2s ease;
+            z-index: 10001;
+        }
+
+        .lightbox-nav:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .lightbox-nav svg {
+            width: 24px;
+            height: 24px;
+            color: white;
+        }
+
+        .lightbox-prev {
+            left: 1.5rem;
+        }
+
+        .lightbox-next {
+            right: 1.5rem;
+        }
+
+        .lightbox-content {
+            max-width: 90vw;
+            max-height: 85vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .lightbox-content img {
+            max-width: 100%;
+            max-height: 75vh;
+            object-fit: contain;
+            border-radius: 8px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        .lightbox-caption {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+            margin-top: 1rem;
+            text-align: center;
+            max-width: 600px;
+        }
+
+        .lightbox-counter {
+            position: absolute;
+            bottom: 1.5rem;
+            left: 50%;
+            transform: translateX(-50%);
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.85rem;
+            font-family: var(--font-mono);
+        }
+
+        /* Mobile adjustments */
+        @media (max-width: 768px) {
+            .lightbox-nav {
+                width: 40px;
+                height: 40px;
+            }
+            
+            .lightbox-prev {
+                left: 0.75rem;
+            }
+            
+            .lightbox-next {
+                right: 0.75rem;
+            }
+            
+            .gallery-thumbs img {
+                width: 40px;
+                height: 40px;
+            }
+        }
+
+        /* Contact Form Styles */
+        .contact-info {
+            display: flex;
+            flex-direction: column;
+            gap: 3rem;
+        }
+
+        .contact-block h3 {
+            font-family: var(--font-sans);
+            font-size: 0.75rem;
+            font-weight: 500;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+            color: var(--color-text-muted);
+        }
+
+        .contact-block p,
+        .contact-block address {
+            font-style: normal;
+            font-size: 1rem;
+            line-height: 1.8;
+            color: var(--color-text);
+        }
+
+        .contact-block a {
+            display: inline-block;
+            border-bottom: 1px solid transparent;
+            transition: border-color 0.3s ease, opacity 0.3s ease;
+        }
+
+        .contact-block a:hover {
+            border-bottom-color: var(--color-text);
+            opacity: 1;
+        }
+
+        .contact-form {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .form-group {
+            position: relative;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.75rem;
+            font-weight: 500;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            margin-bottom: 0.75rem;
+            color: var(--color-text-muted);
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 0.75rem 0;
+            font-family: var(--font-sans);
+            font-size: 1rem;
+            color: var(--color-text);
+            transition: border-color 0.3s ease;
+            outline: none;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            border-bottom-color: var(--color-text);
+        }
+
+        .form-group input::placeholder,
+        .form-group textarea::placeholder {
+            color: var(--color-text-muted);
+            opacity: 0.5;
+        }
+
+        .form-group textarea {
+            resize: none;
+            min-height: 120px;
+        }
+
+        .form-submit {
+            align-self: flex-start;
+            background: var(--color-text);
+            color: var(--color-bg);
+            border: none;
+            padding: 1rem 2.5rem;
+            font-family: var(--font-sans);
+            font-size: 0.875rem;
+            font-weight: 500;
+            letter-spacing: 0.02em;
+            cursor: pointer;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+            margin-top: 1rem;
+        }
+
+        .form-submit:hover {
+            transform: translateY(-2px);
+            opacity: 0.9;
+        }
+
+        .contact-social {
+            display: flex;
+            gap: 2rem;
+            margin-top: 1rem;
+        }
+
+        .contact-social a {
+            font-size: 0.9375rem;
+            color: var(--color-text-muted);
+            transition: color 0.3s ease;
+        }
+
+        .contact-social a:hover {
+            color: var(--color-text);
+            opacity: 1;
+        }
+
+        /* Hero Section */
         .hero {
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             justify-content: center;
-            padding: 8rem 2rem 4rem;
+            padding: 0 3rem;
+            position: relative;
         }
 
         .hero-title {
-            font-family: 'Syne', sans-serif;
-            font-size: clamp(2.5rem, 8vw, 6rem);
+            font-family: var(--font-serif);
+            font-size: clamp(5rem, 10vw, 8rem);
             font-weight: 400;
-            line-height: 1.1;
+            line-height: 1.05;
             letter-spacing: -0.03em;
-            max-width: 900px;
-            margin-bottom: 3rem;
+            max-width: 14ch;
+            animation: fadeUp 1.2s ease-out;
         }
 
-        .hero-subtitle {
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 0.15em;
-            color: var(--text-secondary);
-            margin-bottom: 1rem;
+        .hero-title em {
+            font-style: italic;
         }
 
-        /* Stats Bar */
-        .stats-bar {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 2rem;
-            margin-top: 4rem;
-            padding: 2rem 0;
-            border-top: 1px solid var(--border-color);
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(60px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
-        .stat-item {
-            text-align: center;
+        .hero-video {
+            position: absolute;
+            right: 3rem;
+            bottom: 3rem;
+            width: 280px;
+            height: 180px;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+            overflow: hidden;
+            animation: fadeIn 1.5s ease-out 0.5s both;
         }
 
-        .stat-number {
-            font-family: 'Syne', sans-serif;
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-            color: var(--accent-color);
+        .hero-video::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 2px,
+                rgba(255,255,255,0.03) 2px,
+                rgba(255,255,255,0.03) 4px
+            );
+            pointer-events: none;
         }
 
-        .stat-label {
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            color: var(--text-secondary);
+        .hero-images {
+        display: flex;
+        gap: 12px;          /* 이미지 사이 간격 */
+        justify-content: center;
+        flex-wrap: wrap;    /* 화면 좁을 때 줄 바꿈 */
+        margin: 16px 0;
         }
 
-        /* Hiring Banner */
-        .banner {
-            border: 1px solid var(--border-color);
-            padding: 1rem 1.5rem;
-            display: inline-flex;
-            align-items: center;
-            gap: 1rem;
-            margin-top: 2rem;
-            transition: all 0.3s ease;
-            max-width: fit-content;
+        .hero-images img {
+        max-width: 180px;   /* 한 이미지 최대 폭 */
+        height: auto;
+        border-radius: 8px; /* 모서리 둥글게 (선택) */
         }
 
-        .banner:hover {
-            border-color: var(--text-primary);
-            background-color: var(--hover-bg);
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
 
-        .banner-tag {
-            font-size: 0.65rem;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            color: var(--text-secondary);
-        }
-
-        .banner-text {
-            font-size: 0.85rem;
-        }
-
-        .banner-arrow {
-            margin-left: auto;
-            font-size: 1.25rem;
-            opacity: 0.5;
-        }
-
-        /* About Section */
-        .about-section {
-            padding: 6rem 2rem;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .about-content {
+        /* Intro Section */
+        .intro {
+            padding: 10rem 3rem;
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 4rem;
-            align-items: start;
-        }
-
-        .about-text h2 {
-            font-family: 'Syne', sans-serif;
-            font-size: clamp(1.5rem, 3vw, 2.5rem);
-            font-weight: 600;
-            margin-bottom: 2rem;
-            letter-spacing: -0.02em;
-        }
-
-        .about-text p {
-            font-size: 0.95rem;
-            line-height: 1.8;
-            color: var(--text-secondary);
-            margin-bottom: 1.5rem;
-        }
-
-        .about-highlights {
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-        }
-
-        .highlight-item {
-            padding: 1.5rem;
-            border: 1px solid var(--border-color);
-            transition: all 0.3s ease;
-        }
-
-        .highlight-item:hover {
-            border-color: var(--accent-color);
-            transform: translateX(0.5rem);
-        }
-
-        .highlight-title {
-            font-family: 'Syne', sans-serif;
-            font-size: 1rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-        }
-
-        .highlight-desc {
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-            line-height: 1.6;
-        }
-
-        /* Research Areas */
-        .research-areas-section {
-            padding: 4rem 2rem 6rem;
-            background-color: var(--bg-secondary);
-            transition: background-color 0.3s ease;
-        }
-
-        .section-header {
-            display: flex;
-            justify-content: space-between;
             align-items: center;
-            margin-bottom: 3rem;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid var(--border-color);
         }
 
-        .section-title {
-            font-family: 'Syne', sans-serif;
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 0.15em;
-            color: var(--text-secondary);
+        .intro-text {
+            font-size: 1.375rem;
+            line-height: 1.7;
+            color: var(--color-text-muted);
+            max-width: 540px;
         }
 
-        .areas-grid {
+        .intro-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 2rem;
+            font-size: 0.9375rem;
+            border-bottom: 1px solid var(--color-text-muted);
+            padding-bottom: 0.25rem;
+            background: none;
+            border-top: none;
+            border-left: none;
+            border-right: none;
+            color: var(--color-text);
+            cursor: pointer;
+            font-family: var(--font-sans);
+        }
+
+        .intro-link::after {
+            content: '→';
+            transition: transform 0.3s ease;
+        }
+
+        .intro-link:hover::after {
+            transform: translateX(4px);
+        }
+
+        /* Values Section */
+        .values {
+            padding: 8rem 3rem;
+            background: linear-gradient(180deg, var(--color-bg) 0%, #0f0f0f 100%);
+        }
+
+        .values-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin-bottom: 4rem;
         }
 
-        .area-card {
-            padding: 2rem;
-            background-color: var(--bg-primary);
-            border: 1px solid var(--border-color);
-            transition: all 0.3s ease;
-        }
-
-        .area-card:hover {
-            border-color: var(--accent-color);
-            transform: translateY(-4px);
-        }
-
-        .area-icon {
-            font-size: 2rem;
-            margin-bottom: 1rem;
-        }
-
-        .area-title {
-            font-family: 'Syne', sans-serif;
-            font-size: 1.1rem;
-            font-weight: 600;
-            margin-bottom: 0.75rem;
-        }
-
-        .area-desc {
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-            line-height: 1.6;
-        }
-
-        /* Projects Section */
-        .projects-section {
-            padding: 4rem 2rem 6rem;
-        }
-
-        .projects-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 1px;
-            background-color: var(--border-color);
-        }
-
-        .project-card {
-            background-color: var(--bg-primary);
-            padding: 2rem;
-            min-height: 280px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            transition: background-color 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .project-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(135deg, transparent 0%, var(--gradient-overlay) 100%);
+        .value-item {
+            font-family: var(--font-serif);
+            font-size: clamp(2rem, 5vw, 4rem);
+            font-weight: 400;
+            letter-spacing: -0.02em;
             opacity: 0;
+            transform: translateY(30px);
+            animation: revealValue 0.8s ease-out forwards;
+        }
+
+        .value-item:nth-child(1) { animation-delay: 0.1s; }
+        .value-item:nth-child(2) { animation-delay: 0.2s; }
+        .value-item:nth-child(3) { animation-delay: 0.3s; }
+
+        @keyframes revealValue {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .values-description {
+            max-width: 600px;
+            font-size: 1.125rem;
+            line-height: 1.8;
+            color: var(--color-text-muted);
+        }
+
+        .values-cta {
+            margin-top: 2.5rem;
+        }
+
+        .values-cta button {
+            font-size: 0.9375rem;
+            border: none;
+            border-bottom: 1px solid var(--color-text-muted);
+            padding-bottom: 0.25rem;
+            background: none;
+            color: var(--color-text);
+            cursor: pointer;
+            font-family: var(--font-sans);
             transition: opacity 0.3s ease;
         }
 
-        .project-card:hover::before {
-            opacity: 1;
-        }
-
-        .project-card:hover {
-            background-color: var(--hover-bg);
-        }
-
-        .project-meta {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-        }
-
-        .project-tag {
-            font-size: 0.65rem;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            color: var(--text-secondary);
-            padding: 0.25rem 0.5rem;
-            border: 1px solid var(--border-color);
-        }
-
-        .project-year {
-            font-size: 0.7rem;
-            color: var(--text-secondary);
-        }
-
-        .project-content {
-            margin-top: auto;
-        }
-
-        .project-title {
-            font-family: 'Syne', sans-serif;
-            font-size: 1.5rem;
-            font-weight: 600;
-            line-height: 1.2;
-            margin-bottom: 0.75rem;
-            letter-spacing: -0.02em;
-        }
-
-        .project-desc {
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-            margin-bottom: 1rem;
-            line-height: 1.6;
-        }
-
-        .view-more {
-            font-size: 0.75rem;
-            opacity: 0.7;
-            transition: opacity 0.3s ease;
-        }
-
-        .project-card:hover .view-more {
-            opacity: 1;
-        }
-
-        /* News Section */
-        .news-section {
-            padding: 4rem 2rem 6rem;
-            background-color: var(--bg-secondary);
-            transition: background-color 0.3s ease;
-        }
-
-        .news-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-        }
-
-        .news-item {
-            background-color: var(--bg-primary);
-            border: 1px solid var(--border-color);
-            transition: all 0.3s ease;
-            overflow: hidden;
-        }
-
-        .news-item:hover {
-            border-color: var(--accent-color);
-            transform: translateY(-4px);
-        }
-
-        .news-image {
-            width: 100%;
-            height: 200px;
-            background: linear-gradient(135deg, var(--border-color) 0%, var(--hover-bg) 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 3rem;
-        }
-
-        .news-content {
-            padding: 1.5rem;
-        }
-
-        .news-date {
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            color: var(--text-secondary);
-            margin-bottom: 0.75rem;
-        }
-
-        .news-title {
-            font-family: 'Syne', sans-serif;
-            font-size: 1.1rem;
-            font-weight: 600;
-            margin-bottom: 0.75rem;
-            line-height: 1.3;
-        }
-
-        .news-excerpt {
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-            line-height: 1.6;
-        }
-
-        /* Team Section */
-        .team-section {
-            padding: 4rem 2rem 6rem;
-        }
-
-        .team-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 2rem;
-        }
-
-        .team-member {
-            padding: 2rem;
-            background-color: var(--bg-primary);
-            border: 1px solid var(--border-color);
-            transition: all 0.3s ease;
-            text-align: center;
-        }
-
-        .team-member:hover {
-            transform: translateY(-4px);
-            border-color: var(--text-primary);
-        }
-
-        .member-avatar {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--border-color) 0%, var(--hover-bg) 100%);
-            margin: 0 auto 1.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 3rem;
-        }
-
-        .member-name {
-            font-family: 'Syne', sans-serif;
-            font-size: 1.25rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            letter-spacing: -0.02em;
-        }
-
-        .member-role {
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            color: var(--text-secondary);
-            margin-bottom: 1rem;
-        }
-
-        .member-bio {
-            font-size: 0.85rem;
-            line-height: 1.6;
-            color: var(--text-secondary);
-            margin-bottom: 1rem;
-        }
-
-        .member-links {
-            display: flex;
-            justify-content: center;
-            gap: 1rem;
-            margin-top: 1rem;
-        }
-
-        .member-link {
-            font-size: 0.75rem;
-            padding: 0.5rem 1rem;
-            border: 1px solid var(--border-color);
-            transition: all 0.3s ease;
-        }
-
-        .member-link:hover {
-            border-color: var(--accent-color);
-            opacity: 1;
-        }
-
-        /* Publications Section */
-        .publications-section {
-            padding: 4rem 2rem 6rem;
-            background-color: var(--bg-secondary);
-            transition: background-color 0.3s ease;
-        }
-
-        .publication-list {
-            display: flex;
-            flex-direction: column;
-            gap: 1px;
-            background-color: var(--border-color);
-        }
-
-        .publication-item {
-            background-color: var(--bg-primary);
-            padding: 1.5rem 2rem;
-            display: grid;
-            grid-template-columns: 60px 1fr auto;
-            gap: 2rem;
-            align-items: center;
-            transition: background-color 0.3s ease;
-        }
-
-        .publication-item:hover {
-            background-color: var(--hover-bg);
-        }
-
-        .pub-year {
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-            font-weight: 700;
-        }
-
-        .pub-title {
-            font-family: 'Syne', sans-serif;
-            font-size: 1rem;
-            font-weight: 600;
-            margin-bottom: 0.25rem;
-            letter-spacing: -0.01em;
-        }
-
-        .pub-authors {
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-        }
-
-        .pub-venue {
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            padding: 0.35rem 0.75rem;
-            border: 1px solid var(--border-color);
-            white-space: nowrap;
-        }
-
-        /* Collaborations Section */
-        .collaborations-section {
-            padding: 4rem 2rem 6rem;
-        }
-
-        .collaborators-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 2rem;
-        }
-
-        .collaborator-item {
-            padding: 2rem;
-            border: 1px solid var(--border-color);
-            text-align: center;
-            transition: all 0.3s ease;
-        }
-
-        .collaborator-item:hover {
-            border-color: var(--accent-color);
-            transform: scale(1.05);
-        }
-
-        .collaborator-logo {
-            font-family: 'Syne', sans-serif;
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-bottom: 1rem;
-            color: var(--text-secondary);
-        }
-
-        .collaborator-name {
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-        }
-
-        /* Gallery Section */
-        .gallery-section {
-            padding: 4rem 2rem 6rem;
-            background-color: var(--bg-secondary);
-            transition: background-color 0.3s ease;
-        }
-
-        .gallery-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 1rem;
-        }
-
-        .gallery-item {
-            aspect-ratio: 16/10;
-            background: linear-gradient(135deg, var(--border-color) 0%, var(--hover-bg) 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 3rem;
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-
-        .gallery-item:hover {
-            transform: scale(1.02);
-        }
-
-        /* Newsletter Section */
-        .newsletter-section {
-            padding: 6rem 2rem;
-            text-align: center;
-        }
-
-        .newsletter-title {
-            font-family: 'Syne', sans-serif;
-            font-size: clamp(1.5rem, 4vw, 2.5rem);
-            font-weight: 600;
-            margin-bottom: 2rem;
-            letter-spacing: -0.02em;
-        }
-
-        .newsletter-form {
-            max-width: 500px;
-            margin: 0 auto;
-            display: flex;
-            gap: 1rem;
-        }
-
-        .newsletter-input {
-            flex: 1;
-            padding: 1rem 1.5rem;
-            border: 1px solid var(--border-color);
-            background-color: var(--bg-primary);
-            color: var(--text-primary);
-            font-family: 'Space Mono', monospace;
-            font-size: 0.85rem;
-            transition: all 0.3s ease;
-        }
-
-        .newsletter-input:focus {
-            outline: none;
-            border-color: var(--accent-color);
-        }
-
-        .newsletter-button {
-            padding: 1rem 2rem;
-            border: 1px solid var(--text-primary);
-            background-color: var(--text-primary);
-            color: var(--bg-primary);
-            font-family: 'Space Mono', monospace;
-            font-size: 0.85rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .newsletter-button:hover {
-            opacity: 0.8;
+        .values-cta button:hover {
+            opacity: 0.6;
         }
 
         /* Footer */
         footer {
-            padding: 4rem 2rem 2rem;
-            background-color: var(--bg-primary);
-            border-top: 1px solid var(--border-color);
+            padding: 6rem 3rem 3rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
         }
 
         .footer-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 3rem;
-            margin-bottom: 3rem;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 4rem;
+            margin-bottom: 4rem;
         }
 
-        .footer-col h4 {
-            font-family: 'Syne', sans-serif;
+        .footer-location h3 {
+            font-family: var(--font-sans);
             font-size: 0.75rem;
-            text-transform: uppercase;
+            font-weight: 500;
             letter-spacing: 0.1em;
+            text-transform: uppercase;
             margin-bottom: 1rem;
-            font-weight: 600;
+            color: var(--color-text-muted);
         }
 
-        .footer-col p,
-        .footer-col a {
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-            display: block;
-            margin-bottom: 0.5rem;
+        .footer-location address {
+            font-style: normal;
+            font-size: 0.9375rem;
+            line-height: 1.8;
+            color: var(--color-text-muted);
+        }
+
+        .footer-location address a:hover {
+            color: var(--color-text);
         }
 
         .footer-bottom {
-            padding-top: 2rem;
-            border-top: 1px solid var(--border-color);
             display: flex;
             justify-content: space-between;
             align-items: center;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            font-size: 0.8125rem;
+            color: var(--color-text-muted);
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .footer-links button {
+            background: none;
+            border: none;
+            color: inherit;
+            cursor: pointer;
+            font-size: inherit;
+            font-family: inherit;
+            transition: opacity 0.3s ease;
+        }
+
+        .footer-links button:hover {
+            opacity: 0.6;
+        }
+
+        /* Scroll Indicator */
+        .scroll-indicator {
+            position: absolute;
+            bottom: 3rem;
+            left: 3rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
             font-size: 0.75rem;
-            color: var(--text-secondary);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--color-text-muted);
+            animation: pulse 2s ease-in-out infinite;
         }
 
-        .copyright {
-            text-transform: lowercase;
-            letter-spacing: 0.05em;
+        .scroll-indicator::before {
+            content: '';
+            width: 1px;
+            height: 40px;
+            background: linear-gradient(to bottom, var(--color-text-muted), transparent);
         }
 
-        /* Responsive Design */
-        @media (max-width: 768px) {
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
             header {
-                padding: 1rem 1.5rem;
+                padding: 1.5rem 2rem;
             }
 
             nav {
-                gap: 1.5rem;
+                display: flex;
+                position: fixed;
+                top: 70px;
+                left: 0;
+                right: 0;
+                flex-direction: column;
+                gap: 0;
+                background: var(--color-bg);
+                border-bottom: 1px solid rgba(255,255,255,0.1);
+                padding: 2rem;
+                z-index: 99;
+                
+                /* 부드러운 애니메이션 */
+                opacity: 0;
+                visibility: hidden;
+                transform: translateY(-20px);
+                transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
             }
 
-            nav a {
-                font-size: 0.7rem;
+            nav.mobile-open {
+                opacity: 1;
+                visibility: visible;
+                transform: translateY(0);
+            }
+
+            nav a, nav button {
+                padding: 0.75rem 0;
+                font-size: 1rem;
+            }
+
+            .menu-toggle {
+                display: block;
             }
 
             .hero {
-                padding: 6rem 1.5rem 3rem;
+                padding: 0 2rem;
             }
 
-            .about-content {
+            .hero-video {
+                display: none;
+            }
+
+            .intro {
                 grid-template-columns: 1fr;
-                gap: 2rem;
+                padding: 6rem 2rem;
             }
 
-            .projects-section,
-            .team-section,
-            .publications-section,
-            .news-section,
-            .collaborations-section,
-            .gallery-section {
-                padding: 3rem 1.5rem 4rem;
+            .values {
+                padding: 6rem 2rem;
             }
 
-            .publication-item {
+            .values-grid {
                 grid-template-columns: 1fr;
-                gap: 0.5rem;
+                gap: 1rem;
             }
 
             .footer-grid {
-                gap: 2rem;
+                grid-template-columns: 1fr;
+                gap: 3rem;
             }
 
-            .theme-toggle {
-                bottom: 1.5rem;
-                right: 1.5rem;
-                width: 45px;
-                height: 45px;
+            footer {
+                padding: 4rem 2rem 2rem;
             }
 
-            .newsletter-form {
+            .footer-bottom {
                 flex-direction: column;
+                gap: 1.5rem;
+                text-align: center;
             }
 
-            .stats-bar {
-                grid-template-columns: repeat(2, 1fr);
+            /* Overlay Responsive */
+            .overlay-close {
+                right: 2rem;
+                top: 1.5rem;
             }
+
+            .overlay-content {
+                padding: 6rem 2rem 3rem;
+            }
+
+            .overlay-grid {
+                grid-template-columns: 1fr;
+                gap: 4rem;
+            }
+
+            .contact-form {
+                order: -1;
+            }
+
+            .team-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .research-areas {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .hero-title {
+                font-size: clamp(2rem, 10vw, 5rem);
+            }
+
+            .scroll-indicator {
+                display: none;
+            }
+
+            .overlay-title {
+                font-size: clamp(2.5rem, 10vw, 4rem);
+            }
+        }
+
+        /* Grain Overlay */
+        .grain {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1000;
+            opacity: 0.04;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
         }
     </style>
 </head>
 <body>
-    <!-- Theme Toggle Button -->
-    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
-        <span id="themeIcon">☀️</span>
-    </button>
+    <div class="grain"></div>
+    
+    <a href="#main-content" class="skip-link">Skip to content</a>
 
+<!-- ==================== -->
+    <!-- ABOUT OVERLAY        -->
+    <!-- ==================== -->
+    <div class="overlay" id="aboutOverlay">
+        <button class="overlay-close" data-close="aboutOverlay">
+            <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5">
+                <line x1="1" y1="1" x2="13" y2="13"></line>
+                <line x1="13" y1="1" x2="1" y2="13"></line>
+            </svg>
+            Close
+        </button>
+        <div class="overlay-content">
+            <div class="overlay-header">
+                <h1 class="overlay-title">About <em>QMET</em></h1>
+                <p class="overlay-subtitle">
+                    Quantum Metrology Laboratory at Chungbuk National University — 
+                    pioneering quantum sensing technologies and quantum computing algorithms.
+                </p>
+            </div>
+            
+            <div class="overlay-grid">
+                <div>
+                    <div class="overlay-section">
+                        <h3>Our Mission</h3>
+                        <p>
+                            We explore the full spectrum of quantum technology, from precision 
+                            sensing that pushes measurement limits to quantum computing algorithms 
+                            that harness the power of quantum mechanics for computational advantage.
+                        </p>
+                        <p>
+                            Our laboratory serves as a bridge between fundamental quantum physics 
+                            and real-world applications, training the next generation of researchers 
+                            who can navigate both academic inquiry and industrial innovation.
+                        </p>
+                    </div>
+                    
+                    <div class="overlay-section">
+                        <h3>Quantum Computing</h3>
+                        <p>
+                            We develop and implement quantum algorithms using two distinct paradigms: 
+                            D-Wave quantum annealing systems for optimization problems and the IQM Spark 
+                            gate-based quantum computer for universal quantum computation. This dual 
+                            approach allows us to explore the strengths of each architecture.
+                        </p>
+                    </div>
+                </div>
+                
+                <div>
+                    <div class="overlay-section">
+                        <h3>Quantum Sensing Research</h3>
+                        <ul>
+                            <li>NV center-based magnetometry</li>
+                            <li>Rydberg atom electric field sensing</li>
+                            <li>Atomic magnetometer for brain signal measurement</li>
+                            <li>Precision measurement beyond classical limits</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="overlay-section">
+                        <h3>Instrumentation Development</h3>
+                        <p>
+                            Beyond quantum research, we develop advanced instrumentation including 
+                            5-axis mirror alignment algorithms. This work cultivates versatile 
+                            engineers equipped with precision optics and automation skills — 
+                            preparing talent for both quantum technologies and broader industrial 
+                            applications.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- ==================== -->
+    <!-- PROFESSOR OVERLAY    -->
+    <!-- ==================== -->
+    <div class="overlay" id="professorOverlay">
+        <button class="overlay-close" data-close="professorOverlay">
+            <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5">
+                <line x1="1" y1="1" x2="13" y2="13"></line>
+                <line x1="13" y1="1" x2="1" y2="13"></line>
+            </svg>
+            Close
+        </button>
+        <div class="overlay-content">
+            <div class="overlay-header professor-header">
+                <div class="professor-photo-wrapper">
+                    <img 
+                        src="https://raw.githubusercontent.com/tjdgus5160/QMET.github.io/main/homepage_photo/professor_photo.jpg" 
+                        alt="Prof. Kiwoong Kim" 
+                        class="professor-photo"
+                    >
+                </div>
+                <div class="professor-header-text">
+                    <h1 class="overlay-title">Prof. Kiwoong <em>Kim</em></h1>
+                    <p class="overlay-subtitle">
+                        Principal Investigator, Quantum Metrology Laboratory
+                    </p>
+                </div>
+            </div>
+            
+            <div class="overlay-grid">
+                <div>
+                    <div class="overlay-section">
+                        <h3>Contact</h3>
+                        <p>
+                            <strong>Email:</strong> <a>kiwoong@cbnu.ac.kr</a></br>
+                            <strong>Tel:</strong> <a>043-261-2277</a>
+                        </p>
+                    </div>
+                    
+                    <div class="overlay-section">
+                        <h3>Academic Background</h3>
+                        <ul>
+                            <li><strong>1997 – 2002</strong> Ph.D. (Solid-State Physics), KAIST</li>
+                            <li><strong>1995 – 1997</strong> M.S. (Non-linear Dynamics), KAIST</li>
+                            <li><strong>1992 – 1995</strong> B.S. (High-power Laser Physics), KAIST</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="overlay-section">
+                        <h3>Career</h3>
+                        <ul>
+                            <li><strong>2024 – Present</strong> Director, ChungBuk Quantum Research Center (CBQRC)</li>
+                            <li><strong>2020 – Present</strong> Professor, Dept. of Physics, Chungbuk National University; Head Professor, Graduate School of Educational and Research Equipment Development</li>
+                            <li><strong>2002 – 2020</strong> Research Center Head / Distinguished / Principal Research Scientist, Korea Research Institute of Standards and Science (KRISS)</li>
+                            <li><strong>2006 – 2020</strong> Professor, Dept. of Medical Physics, University of Science & Technology (UST)</li>
+                            <li><strong>2018 – 2019</strong> Invited Foreign Scholar, Dept. of Electrical Engineering, Kyoto University, Japan</li>
+                            <li><strong>2012</strong> Invited Guest Scientist, Div.8.22 Biosignal, PTB, Germany</li>
+                            <li><strong>2006 – 2007</strong> Research Associate, Dept. of Physics, Princeton University, U.S.A.</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div>
+                    <div class="overlay-section">
+                        <h3>Professional Activities</h3>
+                        <ul>
+                            <li><strong>2016 – Present</strong> IEEE/IEC TC90 (WG 14) Standardization technical committee expert</li>
+                            <li><strong>2016 – Present</strong> Institute of Complex Medical Engineering, councilor</li>
+                            <li><strong>2014 – 2016</strong> International Conference on Biomagnetism LOC, Finance Committee Chair</li>
+                            <li><strong>2015 – Present</strong> Asian Symposium on Magnetocardiography, Steering committee member</li>
+                            <li><strong>2012 – Present</strong> APSIPA Technical Committee Member</li>
+                            <li><strong>2002 – Present</strong> Korean Superconductivity Society, various leadership roles</li>
+                            <li><strong>2003 – Present</strong> Korean Human Brain Mapping Society, R&D Director / Councilor</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="overlay-section">
+                        <h3>Selected Publications</h3>
+                        <ul>
+                            <li><strong>2022</strong> K. An, et al., "Detection of the 40 Hz auditory steady-state response with optically pumped magnetometers" <em>Sci. Rep.</em></li>
+                            <li><strong>2018</strong> K. An, et al., "Magnetoencephalographic study of event-related fields..." <em>Human Brain Mapping</em> (Cover article)</li>
+                            <li><strong>2014</strong> Kiwoong Kim, et al., "Toward a brain functional connectivity mapping modality..." <em>NeuroImage</em> (Cover article)</li>
+                            <li><strong>2014</strong> Kiwoong Kim, et al., "Multi-channel atomic magnetometer for MEG" <em>NeuroImage</em></li>
+                        </ul>
+                    </div>
+                    
+                    <div class="overlay-section">
+                        <h3>Achievements</h3>
+                        <ul>
+                            <li>>90 International/Domestic Patents</li>
+                            <li>MCG/MEG Technology Transfer to BMP GmbH, Compumedics Ltd</li>
+                            <li>>20 Research Awards including Top-100 National R&D Award</li>
+                            <li>Top-10 Outstanding National Researches (Science Ministry Award)</li>
+                            <li>Siemens-KHBM Scientific Award</li>
+                            <li>BIOMAG Young Investigator Award</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== -->
+    <!-- TEAM OVERLAY         -->
+    <!-- ==================== -->
+    <div class="overlay" id="teamOverlay">
+        <button class="overlay-close" data-close="teamOverlay">
+            <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5">
+                <line x1="1" y1="1" x2="13" y2="13"></line>
+                <line x1="13" y1="1" x2="1" y2="13"></line>
+            </svg>
+            Close
+        </button>
+        <div class="overlay-content">
+            <div class="overlay-header">
+                <h1 class="overlay-title">Our <em>Team</em></h1>
+                <p class="overlay-subtitle">
+                    Meet the researchers and students driving innovation in quantum science.
+                </p>
+            </div>
+            
+            <!-- Current Members -->
+            <div class="team-section">
+                <h2 class="team-section-title">Current Members</h2>
+                <div class="team-grid">
+                    <div class="team-member">
+                            <img 
+                                src="https://raw.githubusercontent.com/tjdgus5160/QMET.github.io/main/homepage_photo/professor_photo.jpg" 
+                                alt="Prof. Kiwoong Kim" 
+                                class="team-photo"
+                            >
+                        <h4>Prof. Kiwoong Kim</h4>
+                        <p class="role">Principal Investigator</p>
+                        <p class="email"><a>kiwoong@cbnu.ac.kr</a></p>
+                    </div>
+                    
+                    <div class="team-member">
+                        
+                        <img 
+                            src="https://raw.githubusercontent.com/tjdgus5160/QMET.github.io/main/homepage_photo/Hyeon_photo.jpg" 
+                            alt="SeongHyeon Park" 
+                            class="team-photo"
+                        >
+                        <h4>SeongHyeon Park</h4>
+                        <p class="role">Integrated Master's/Ph.D. Student</p>
+                        <p class="email"><a>tjdgus5160@chungbuk.ac.kr</a></p>
+                    </div>
+                    
+                    <div class="team-member">
+                        <img 
+                            src="https://raw.githubusercontent.com/tjdgus5160/QMET.github.io/main/homepage_photo/CHILL_GUY.jpg" 
+                            alt="arimryou" 
+                            class="team-photo"
+                        >
+                        <h4>Arim Ryou</h4>
+                        <p class="role">Integrated Master's/Ph.D. Student</p>
+                        <p class="email"><a>arimryou@cbnu.ac.kr</a></p>
+                        <https://arim-ryou.github.io>
+                    </div>
+                    
+                    <div class="team-member">
+                        <img 
+                            src="https://raw.githubusercontent.com/tjdgus5160/QMET.github.io/main/homepage_photo/jun_photo.jpg" 
+                            alt="Jun" 
+                            class="team-photo"
+                        >
+                        <h4>JunSeob Shin</h4>
+                        <p class="role">M.S. Student</p>
+                        <p class="email"><a>?@cbnu.ac.kr</a></p>
+                    </div>
+
+                    <div class="team-member">
+                        <img 
+                            src="https://raw.githubusercontent.com/tjdgus5160/QMET.github.io/main/homepage_photo/Dock_photo.jpg" 
+                            alt="Yang" 
+                            class="team-photo"
+                        >
+                        <h4>YaeDoek Yang</h4>
+                        <p class="role">M.S. Student</p>
+                        <p class="email"><a>?@cbnu.ac.kr</a></p>
+                    </div>
+
+                    <div class="team-member">
+                        <img 
+                            src="https://raw.githubusercontent.com/tjdgus5160/QMET.github.io/main/homepage_photo/CHILL_GUY.jpg" 
+                            alt="Haneob" 
+                            class="team-photo"
+                        >
+                        <h4>Haneob Jeon</h4>
+                        <p class="role">M.S. Student</p>
+                        <p class="email"><a>?@cbnu.ac.kr</a></p>
+                    </div>
+
+                    <div class="team-member">
+                        <img 
+                            src="https://raw.githubusercontent.com/tjdgus5160/QMET.github.io/main/homepage_photo/CHILL_GUY.jpg" 
+                            alt="Inone" 
+                            class="team-photo"
+                        >
+                        <h4>Inone Lee</h4>
+                        <p class="role">M.S. Student</p>
+                        <p class="email"><a>?@cbnu.ac.kr</a></p>
+                    </div>
+
+                    <div class="team-member">
+                        <img 
+                            src="https://raw.githubusercontent.com/tjdgus5160/QMET.github.io/main/homepage_photo/CHILL_GUY.jpg" 
+                            alt="sbchae" 
+                            class="team-photo"
+                        >
+                        <h4>Sebyeog Chae</h4>
+                        <p class="role">Undergraduate Researcher</p>
+                        <p class="email"><a>sbchae04@gmail.com</a></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Alumni Section -->
+            <div class="team-section alumni-section">
+                <h2 class="team-section-title">Alumni</h2>
+                <div class="team-grid">
+                    <div class="team-member">
+                        <img 
+                            src="https://raw.githubusercontent.com/tjdgus5160/QMET.github.io/main/homepage_photo/CHILL_GUY.jpg" 
+                            alt="None" 
+                            class="team-photo"
+                        >
+                        <h4>Alumni Name</h4>
+                        <p class="role">None</p>
+                        <p class="email"><a>None</a></p>
+                    </div>
+                    
+                    <!-- 필요한 만큼 추가 -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ==================== -->
+    <!-- PUBLICATION OVERLAY  -->
+    <!-- ==================== -->
+    <div class="overlay" id="publicationOverlay">
+        <button class="overlay-close" data-close="publicationOverlay">
+            <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5">
+                <line x1="1" y1="1" x2="13" y2="13"></line>
+                <line x1="13" y1="1" x2="1" y2="13"></line>
+            </svg>
+            Close
+        </button>
+        <div class="overlay-content">
+            <div class="overlay-header">
+                <h1 class="overlay-title"><em>Publications</em></h1>
+                <p class="overlay-subtitle">
+                    Our contributions to the scientific community in quantum metrology 
+                    and quantum computer and related fields.
+                </p>
+            </div>
+            
+            <div class="overlay-grid single-column">
+                <div class="publication-list">
+                    <div class="publication-item">
+                        <p class="publication-year">2025</p>
+                        <h4 class="publication-title">None</h4>
+                        <p class="publication-authors">None</p>
+                        <p class="publication-journal">None</p>
+                    </div>
+                    <div class="publication-item">
+                        <p class="publication-year">2025</p>
+                        <h4 class="publication-title">None</h4>
+                        <p class="publication-authors">None</p>
+                        <p class="publication-journal">None</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== -->
+    <!-- ACTIVITY OVERLAY     -->
+    <!-- ==================== -->
+    <div class="overlay" id="activityOverlay">
+        <button class="overlay-close" data-close="activityOverlay">
+            <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5">
+                <line x1="1" y1="1" x2="13" y2="13"></line>
+                <line x1="13" y1="1" x2="1" y2="13"></line>
+            </svg>
+            Close
+        </button>
+        <div class="overlay-content">
+            <div class="overlay-header">
+                <h1 class="overlay-title">Lab <em>Activity</em></h1>
+                <p class="overlay-subtitle">
+                    Recent news, events, and milestones from our research group.
+                </p>
+            </div>
+            
+            <div class="activity-list">
+                <!-- Activity -4 -->
+                <div class="activity-card">
+                    <div class="activity-card-header">
+                        <p class="activity-date">January 2026</p>
+                        <h4 class="activity-title">Poster Presentation at KSSC winter Meeting</h4>
+                        <p class="activity-description">
+                            Poster presentation at the KSSC winter Meeting on quantum annealer algorithms, 
+                            gate-based quantum computing algorithms, and superconducting qubit circuit design 
+                            and simulation using the KQC software.
+                        </p>
+                    </div>
+                    <div class="activity-carousel" data-carousel>
+                        <div class="carousel-track">
+                            <div class="carousel-slide"><img src="https://raw.githubusercontent.com/tjdgus5160/QMET.github.io/main/Activity/KSSCW_1.jpg" alt="Activity 1-1"></div>
+                            <div class="carousel-slide"><img src="https://raw.githubusercontent.com/tjdgus5160/QMET.github.io/main/Activity/KSSCW_2.jpg" alt="Activity 1-2"></div>
+                            <div class="carousel-slide"><img src="https://raw.githubusercontent.com/tjdgus5160/QMET.github.io/main/Activity/KSSCW_3.jpg" alt="Activity 1-3"></div>
+                            <div class="carousel-slide"><img src="https://raw.githubusercontent.com/tjdgus5160/QMET.github.io/main/Activity/KSSCW_4.jpg" alt="Activity 1-4"></div>
+                            <div class="carousel-slide"><img src="https://raw.githubusercontent.com/tjdgus5160/QMET.github.io/main/Activity/KSSCW_5.jpg" alt="Activity 1-5"></div>
+                            <div class="carousel-slide"><img src="https://raw.githubusercontent.com/tjdgus5160/QMET.github.io/main/Activity/KSSCW_6.jpg" alt="Activity 1-6"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Activity -3 -->
+                <div class="activity-card has-news" data-news-url="https://example.com/news/chungbuk-ai-festa">
+                    <div class="activity-card-header">
+                        <div class="news-badge">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M19 20H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v1m2 13a2 2 0 0 1-2-2V7m2 13a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-2m-4-3H9M7 16h6M7 12h10"/>
+                            </svg>
+                            <span>News Article</span>
+                        </div>
+                        <p class="activity-date">November 2025</p>
+                        <h4 class="activity-title">Chungbuk AI FESTA</h4>
+                        <p class="activity-description">
+                            Demonstrated and guided hands-on sessions on quantum annealer algorithms and IQM Spark 
+                            quantum computer algorithms at Chungbuk AI FESTA, providing both conceptual explanations and 
+                            interactive user experiences with real quantum hardware.
+                        </p>
+                        <div class="news-arrow">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M5 12h14M12 5l7 7-7 7"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="activity-carousel" data-carousel>
+                        <div class="carousel-track">
+                            <div class="carousel-slide"><img src="https://raw.githubusercontent.com/tjdgus5160/QMET.github.io/main/Activity/CAF_1.jpg" alt="Activity 1-1"></div>
+                            <div class="carousel-slide"><img src="https://raw.githubusercontent.com/tjdgus5160/QMET.github.io/main/Activity/CAF_2.jpg" alt="Activity 1-2"></div>
+                            <div class="carousel-slide"><img src="https://raw.githubusercontent.com/tjdgus5160/QMET.github.io/main/Activity/CAF_3.jpg" alt="Activity 1-3"></div>
+                            <div class="carousel-slide"><img src="https://raw.githubusercontent.com/tjdgus5160/QMET.github.io/main/Activity/CAF_4.jpg" alt="Activity 1-4"></div>
+                            <div class="carousel-slide"><img src="https://raw.githubusercontent.com/tjdgus5160/QMET.github.io/main/Activity/CAF_5.jpg" alt="Activity 1-5"></div>
+                            <div class="carousel-slide"><img src="https://raw.githubusercontent.com/tjdgus5160/QMET.github.io/main/Activity/CAF_6.jpg" alt="Activity 1-6"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Activity -2 -->
+                <div class="activity-card has-news" data-news-url="https://example.com/news/chungbuk-startup-festival">
+                    <div class="activity-card-header">
+                        <div class="news-badge">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M19 20H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v1m2 13a2 2 0 0 1-2-2V7m2 13a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-2m-4-3H9M7 16h6M7 12h10"/>
+                            </svg>
+                            <span>News Article</span>
+                        </div>
+                        <p class="activity-date">October 2025</p>
+                        <h4 class="activity-title">Chungbuk Startup Festival</h4>
+                        <p class="activity-description">
+                            Demonstrated and guided hands-on sessions on quantum annealer algorithms and IQM Spark 
+                            quantum computer algorithms at Chungbuk Startup Festival, providing both conceptual explanations and 
+                            interactive user experiences with real quantum hardware.
+                        </p>
+                        <div class="news-arrow">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M5 12h14M12 5l7 7-7 7"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="activity-carousel" data-carousel>
+                        <div class="carousel-track">
+                            <div class="carousel-slide"><img src="https://raw.githubusercontent.com/tjdgus5160/QMET.github.io/main/Activity/CSF_1.jpg" alt="Activity 1-1"></div>
+                            <div class="carousel-slide"><img src="https://raw.githubusercontent.com/tjdgus5160/QMET.github.io/main/Activity/CSF_2.jpg" alt="Activity 1-2"></div>
+                            <div class="carousel-slide"><img src="https://raw.githubusercontent.com/tjdgus5160/QMET.github.io/main/Activity/CSF_3.jpg" alt="Activity 1-3"></div>
+                            <div class="carousel-slide"><img src="https://raw.githubusercontent.com/tjdgus5160/QMET.github.io/main/Activity/CSF_4.jpg" alt="Activity 1-4"></div>
+                            <div class="carousel-slide"><img src="https://raw.githubusercontent.com/tjdgus5160/QMET.github.io/main/Activity/CSF_5.jpg" alt="Activity 1-5"></div>
+                            <div class="carousel-slide"><img src="https://raw.githubusercontent.com/tjdgus5160/QMET.github.io/main/Activity/CSF_6.jpg" alt="Activity 1-6"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Activity 0 -->
+                <div class="activity-card">
+                    <div class="activity-card-header">
+                        <p class="activity-date">September 2025</p>
+                        <h4 class="activity-title">AI FESTA</h4>
+                        <p class="activity-description">
+                            Demonstrated and guided hands-on sessions on quantum annealer algorithms and IQM Spark 
+                            quantum computer algorithms at AI FESTA, providing both conceptual explanations and 
+                            interactive user experiences with real quantum hardware.
+                        </p>
+                    </div>
+                    <div class="activity-carousel" data-carousel>
+                        <div class="carousel-track">
+                            <div class="carousel-slide"><img src="https://raw.githubusercontent.com/tjdgus5160/QMET.github.io/main/Activity/AF_1.jpg" alt="Activity 1-1"></div>
+                            <div class="carousel-slide"><img src="https://raw.githubusercontent.com/tjdgus5160/QMET.github.io/main/Activity/AF_2.jpg" alt="Activity 1-2"></div>
+                            <div class="carousel-slide"><img src="https://raw.githubusercontent.com/tjdgus5160/QMET.github.io/main/Activity/AF_3.jpg" alt="Activity 1-3"></div>
+                            <div class="carousel-slide"><img src="https://raw.githubusercontent.com/tjdgus5160/QMET.github.io/main/Activity/AF_4.jpg" alt="Activity 1-4"></div>
+                            <div class="carousel-slide"><img src="https://raw.githubusercontent.com/tjdgus5160/QMET.github.io/main/Activity/AF_5.jpg" alt="Activity 1-5"></div>
+                            <div class="carousel-slide"><img src="https://raw.githubusercontent.com/tjdgus5160/QMET.github.io/main/Activity/AF_6.jpg" alt="Activity 1-6"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Activity 1 -->
+                <div class="activity-card">
+                    <div class="activity-card-header">
+                        <p class="activity-date">August 2025</p>
+                        <h4 class="activity-title">Poster Presentation at KSSC summer Meeting</h4>
+                        <p class="activity-description">
+                            Poster presentation at the KSSC Summer Meeting on quantum annealer algorithms, 
+                            gate-based quantum computing algorithms, and the IQM Spark superconducting quantum 
+                            computer hardware platform.
+                        </p>
+                    </div>
+                    <div class="activity-carousel" data-carousel>
+                        <div class="carousel-track">
+                            <div class="carousel-slide"><img src="https://raw.githubusercontent.com/tjdgus5160/QMET.github.io/main/Activity/KSSCS_1.jpg" alt="Activity 1-1"></div>
+                            <div class="carousel-slide"><img src="https://raw.githubusercontent.com/tjdgus5160/QMET.github.io/main/Activity/KSSCS_2.jpg" alt="Activity 1-2"></div>
+                            <div class="carousel-slide"><img src="https://raw.githubusercontent.com/tjdgus5160/QMET.github.io/main/Activity/KSSCS_3.jpg" alt="Activity 1-3"></div>
+                            <div class="carousel-slide"><img src="https://raw.githubusercontent.com/tjdgus5160/QMET.github.io/main/Activity/KSSCS_4.jpg" alt="Activity 1-4"></div>
+                            <div class="carousel-slide"><img src="https://raw.githubusercontent.com/tjdgus5160/QMET.github.io/main/Activity/KSSCS_5.jpg" alt="Activity 1-5"></div>
+                            <div class="carousel-slide"><img src="https://raw.githubusercontent.com/tjdgus5160/QMET.github.io/main/Activity/KSSCS_6.jpg" alt="Activity 1-6"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Activity 2 -->
+                <div class="activity-card">
+                    <div class="activity-card-header">
+                        <p class="activity-date">August 2025</p>
+                        <h4 class="activity-title">KAIST Graduate School of Quantum Science and Technology Summer Camp</h4>
+                        <p class="activity-description">
+                            Organized and delivered the KAIST Graduate School of Quantum Science and 
+                            Technology Summer Camp using an IQM quantum computer platform, providing participants 
+                            with hands-on experience in running and analyzing quantum algorithms on real 
+                            superconducting quantum hardware.
+                        </p>
+                    </div>
+                    <div class="activity-carousel" data-carousel>
+                        <div class="carousel-track">
+                            <div class="carousel-slide"><img src="https://raw.githubusercontent.com/tjdgus5160/QMET.github.io/main/Activity/QC_1.jpg" alt="Activity 2-1"></div>
+                            <div class="carousel-slide"><img src="https://raw.githubusercontent.com/tjdgus5160/QMET.github.io/main/Activity/QC_2.jpg" alt="Activity 2-2"></div>
+                            <div class="carousel-slide"><img src="https://raw.githubusercontent.com/tjdgus5160/QMET.github.io/main/Activity/QC_3.jpg" alt="Activity 2-3"></div>
+                            <div class="carousel-slide"><img src="https://raw.githubusercontent.com/tjdgus5160/QMET.github.io/main/Activity/QC_4.jpg" alt="Activity 2-4"></div>
+                            <div class="carousel-slide"><img src="https://raw.githubusercontent.com/tjdgus5160/QMET.github.io/main/Activity/QC_5.jpg" alt="Activity 2-5"></div>
+                            <div class="carousel-slide"><img src="https://raw.githubusercontent.com/tjdgus5160/QMET.github.io/main/Activity/QC_6.jpg" alt="Activity 2-6"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Activity 3 -->
+                <div class="activity-card">
+                    <div class="activity-card-header">
+                        <p class="activity-date">June 2025</p>
+                        <h4 class="activity-title">Quantum Korea</h4>
+                        <p class="activity-description">
+                            An exhibition booth on quantum computing was operated 
+                            at Quantum Korea to introduce related research activities and engage visitors 
+                            through interactive demonstrations.
+                        </p>
+                    </div>
+                    <div class="activity-carousel" data-carousel>
+                        <div class="carousel-track">
+                            <div class="carousel-slide"><img src="https://raw.githubusercontent.com/tjdgus5160/QMET.github.io/main/Activity/QK_1.jpg" alt="Activity 3-1"></div>
+                            <div class="carousel-slide"><img src="https://raw.githubusercontent.com/tjdgus5160/QMET.github.io/main/Activity/QK_2.jpg" alt="Activity 3-2"></div>
+                            <div class="carousel-slide"><img src="https://raw.githubusercontent.com/tjdgus5160/QMET.github.io/main/Activity/QK_3.jpg" alt="Activity 3-3"></div>
+                            <div class="carousel-slide"><img src="https://raw.githubusercontent.com/tjdgus5160/QMET.github.io/main/Activity/QK_4.jpg" alt="Activity 3-4"></div>
+                            <div class="carousel-slide"><img src="https://raw.githubusercontent.com/tjdgus5160/QMET.github.io/main/Activity/QK_5.jpg" alt="Activity 3-5"></div>
+                            <div class="carousel-slide"><img src="https://raw.githubusercontent.com/tjdgus5160/QMET.github.io/main/Activity/QK_6.jpg" alt="Activity 3-6"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Activity 4 -->
+                <div class="activity-card">
+                    <div class="activity-card-header">
+                        <p class="activity-date">April 2025</p>
+                        <h4 class="activity-title">ITRC Human Resources Development Expo</h4>
+                        <p class="activity-description">
+                            An exhibition booth on quantum computing was operated at the 2025 
+                            ITRC Human Resources Development Expo to showcase the IQM quantum computer 
+                            installed at Chungbuk National University and to introduce related research 
+                            activities through on-site explanations and demonstrations for visitors.
+                        </p>
+                    </div>
+                    <div class="activity-carousel" data-carousel>
+                        <div class="carousel-track">
+                            <div class="carousel-slide"><img src="https://raw.githubusercontent.com/tjdgus5160/QMET.github.io/main/Activity/ITRC_1.jpg" alt="Activity 4-1"></div>
+                            <div class="carousel-slide"><img src="https://raw.githubusercontent.com/tjdgus5160/QMET.github.io/main/Activity/ITRC_2.jpg" alt="Activity 4-2"></div>
+                            <div class="carousel-slide"><img src="https://raw.githubusercontent.com/tjdgus5160/QMET.github.io/main/Activity/ITRC_3.jpg" alt="Activity 4-3"></div>
+                            <div class="carousel-slide"><img src="https://raw.githubusercontent.com/tjdgus5160/QMET.github.io/main/Activity/ITRC_4.jpg" alt="Activity 4-4"></div>
+                            <div class="carousel-slide"><img src="https://raw.githubusercontent.com/tjdgus5160/QMET.github.io/main/Activity/ITRC_5.jpg" alt="Activity 4-5"></div>
+                            <div class="carousel-slide"><img src="https://raw.githubusercontent.com/tjdgus5160/QMET.github.io/main/Activity/ITRC_6.jpg" alt="Activity 4-6"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== -->
+    <!-- INSIDE THE LAB OVERLAY -->
+    <!-- ==================== -->
+    <div class="overlay" id="insideLabOverlay">
+        <button class="overlay-close" data-close="insideLabOverlay">
+            <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5">
+                <line x1="1" y1="1" x2="13" y2="13"></line>
+                <line x1="13" y1="1" x2="1" y2="13"></line>
+            </svg>
+            Close
+        </button>
+        <div class="overlay-content">
+            <div class="overlay-header">
+                <h1 class="overlay-title">Inside the <em>Lab</em></h1>
+                <p class="overlay-subtitle">
+                    A glimpse into our research environment, equipment, and daily operations.
+                </p>
+            </div>
+            
+            <div class="overlay-grid">
+                <div>
+                    <div class="overlay-section">
+                        <h3>Quantum Sensing Lab</h3>
+                        <p>
+                            Our quantum sensing facility hosts NV center diamond setups, 
+                            Rydberg atom chambers, and optically pumped magnetometer systems. 
+                            Precision optical tables with vibration isolation provide the 
+                            stability needed for detecting ultra-weak magnetic and electric fields.
+                        </p>
+                    </div>
+                    
+                    <div class="overlay-section">
+                        <h3>Atomic Magnetometer Station</h3>
+                        <p>
+                            Dedicated to brain signal measurement research, this station 
+                            houses alkali vapor cells, laser systems for optical pumping, 
+                            and magnetically shielded environments. We develop OPM sensors 
+                            for non-invasive magnetoencephalography applications.
+                        </p>
+                    </div>
+                    
+                    <div class="overlay-section">
+                        <h3>Quantum Computing Access</h3>
+                        <p>
+                            We have access to both D-Wave quantum annealing systems and 
+                            the IQM Spark gate-based quantum computer. Our researchers 
+                            develop and test quantum algorithms remotely, bridging 
+                            theoretical design with real hardware execution.
+                        </p>
+                    </div>
+                </div>
+                
+                <div>
+                    <div class="overlay-section">
+                        <h3>Precision Optics Workshop</h3>
+                        <p>
+                            Our optics workshop features 5-axis mirror alignment systems 
+                            and custom automation setups. This facility trains students 
+                            in precision instrumentation skills applicable to both 
+                            quantum research and industrial optical systems.
+                        </p>
+                    </div>
+                    
+                    <div class="overlay-section">
+                        <h3>Electronics & Control</h3>
+                        <p>
+                            Custom electronics development for quantum experiments, including 
+                            photodetector circuits, RF signal processing, laser controllers, 
+                            and data acquisition systems. We design the specialized hardware 
+                            that enables our sensing and measurement research.
+                        </p>
+                    </div>
+                    
+                    <div class="overlay-section">
+                        <h3>Daily Life</h3>
+                        <p>
+                            Research at QMET spans from algorithm development on quantum 
+                            computers to hands-on sensor construction and characterization. 
+                            Weekly group meetings foster collaboration across our diverse 
+                            research areas, preparing students for careers in both 
+                            academia and industry.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== -->
+    <!-- RESEARCH OVERLAY     -->
+    <!-- ==================== -->
+    <div class="overlay" id="researchOverlay">
+        <button class="overlay-close" data-close="researchOverlay">
+            <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5">
+                <line x1="1" y1="1" x2="13" y2="13"></line>
+                <line x1="13" y1="1" x2="1" y2="13"></line>
+            </svg>
+            Close
+        </button>
+        <div class="overlay-content">
+            <div class="overlay-header">
+                <h1 class="overlay-title">Our <em>Research</em></h1>
+                <p class="overlay-subtitle">
+                    Advancing quantum sensing technologies and quantum computing algorithms.
+                </p>
+            </div>
+            
+            <div class="research-areas">
+                <div class="research-card">
+                    <div class="research-card-gallery">
+                        <div class="gallery-main">
+                            <img src="https://raw.githubusercontent.com/tjdgus5160/QMET.github.io/main/Research/NV_1.png" alt="NV Center Magnetometry Setup" data-lightbox>
+                        </div>
+                        <div class="gallery-thumbs">
+                            <img src="https://raw.githubusercontent.com/tjdgus5160/QMET.github.io/main/Research/NV_2.jpg" alt="NV Center Sensing" data-lightbox>
+                            <img src="https://raw.githubusercontent.com/tjdgus5160/QMET.github.io/main/Research/NV_3.png" alt="NV Center Structure" data-lightbox>
+                        </div>
+                    </div>
+                    <h4>NV Center Magnetometry</h4>
+                    <p>
+                        Development of magnetic field sensors using nitrogen-vacancy 
+                        centers in diamond. These solid-state quantum sensors enable 
+                        high-resolution magnetometry at room temperature with 
+                        nanoscale spatial resolution.
+                    </p>
+                </div>
+                
+                <div class="research-card">
+                    <div class="research-card-gallery">
+                        <div class="gallery-main">
+                            <img src="https://raw.githubusercontent.com/tjdgus5160/QMET.github.io/main/Research/RE_1.jpg" alt="Rydberg Atom Setup" data-lightbox>
+                        </div>
+                        <div class="gallery-thumbs">
+                            <img src="https://raw.githubusercontent.com/tjdgus5160/QMET.github.io/main/Research/RE_2.jpg" alt="Rydberg Atom Setup" data-lightbox>
+                            <img src="https://raw.githubusercontent.com/tjdgus5160/QMET.github.io/main/Research/RE_3.jpg" alt="Rydberg Atom Diagram" data-lightbox>
+                            <img src="https://raw.githubusercontent.com/tjdgus5160/QMET.github.io/main/Research/RE_4.png" alt="Rydberg Atom Diagram" data-lightbox>
+                        </div>
+                    </div>
+                    <h4>Rydberg Atom Electric Field Sensing</h4>
+                    <p>
+                        Exploring Rydberg atoms as ultrasensitive electric field sensors. 
+                        Their extreme polarizability enables detection of low frequency 
+                        fields with unprecedented sensitivity and broad 
+                        frequency coverage.
+                    </p>
+                </div>
+                
+                <div class="research-card">
+                    <div class="research-card-gallery">
+                        <div class="gallery-main">
+                            <img src="https://raw.githubusercontent.com/tjdgus5160/QMET.github.io/main/Research/AM_1.png" alt="OPM MEG simulation" data-lightbox>
+                        </div>
+                        <div class="gallery-thumbs">
+
+                        </div>
+                    </div>
+                    <h4>Atomic Magnetometer for Brain Signals</h4>
+                    <p>
+                        Developing optically pumped magnetometers for magnetoencephalography 
+                        (MEG). These sensors measure the tiny magnetic fields produced by 
+                        neural activity, enabling non-invasive brain imaging without 
+                        cryogenic cooling.
+                    </p>
+                </div>
+                
+                <div class="research-card">
+                    <div class="research-card-gallery">
+                        <div class="gallery-main">
+                            <img src="https://raw.githubusercontent.com/tjdgus5160/QMET.github.io/main/Research/QA_1.png" alt="D-Wave Quantum Annealer" data-lightbox>
+                        </div>
+                        <div class="gallery-thumbs">
+                            <img src="https://raw.githubusercontent.com/tjdgus5160/QMET.github.io/main/Research/QA_2.png" alt="D-Wave Quantum Annealer" data-lightbox>
+                            <img src="https://raw.githubusercontent.com/tjdgus5160/QMET.github.io/main/Research/QA_3.png" alt="D-Wave Quantum Annealer" data-lightbox>
+                        </div>
+                    </div>
+                    <h4>Quantum Annealing Algorithms</h4>
+                    <p>
+                        Implementing optimization algorithms on D-Wave quantum annealing 
+                        systems. We explore applications in combinatorial optimization, 
+                        machine learning, and materials simulation using quantum 
+                        adiabatic computation. [reference: https://arim-ryou.github.io/]
+                    </p>
+                </div>
+                
+                <div class="research-card">
+                    <div class="research-card-gallery">
+                        <div class="gallery-main">
+                            <img src="https://raw.githubusercontent.com/tjdgus5160/QMET.github.io/main/Research/QC_1.jpg" alt="IQM Spark Quantum Computer Algorithms" data-lightbox>
+                        </div>
+                        <div class="gallery-thumbs">
+                            <img src="https://raw.githubusercontent.com/tjdgus5160/QMET.github.io/main/Research/QC_2.jpg" alt="IQM Spark" data-lightbox>
+                        </div>
+                    </div>
+                    <h4>Gate-Based Quantum Computing</h4>
+                    <p>
+                        Developing and testing quantum algorithms on the IQM Spark 
+                        superconducting quantum computer. Our work spans variational 
+                        algorithms, quantum error mitigation, and near-term 
+                        quantum applications.
+                    </p>
+                </div>
+                
+                <div class="research-card">
+                    <div class="research-card-gallery">
+                        <div class="gallery-main">
+                            <img src="https://raw.githubusercontent.com/tjdgus5160/QMET.github.io/main/Research/LA_1.jpg" alt="Precision Mirror Mount System" data-lightbox>
+                        </div>
+                        <div class="gallery-thumbs">
+                        
+                        </div>
+                    </div>
+                    <h4>Precision Instrumentation</h4>
+                    <p>
+                        Engineering advanced research tools including 5-axis mirror 
+                        alignment systems. This work develops automation and precision 
+                        optics skills that bridge quantum research and industrial 
+                        applications.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== -->
+    <!-- IMAGE LIGHTBOX       -->
+    <!-- ==================== -->
+    <div class="lightbox" id="imageLightbox">
+        <button class="lightbox-close" id="lightboxClose">
+            <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5">
+                <line x1="1" y1="1" x2="13" y2="13"></line>
+                <line x1="13" y1="1" x2="1" y2="13"></line>
+            </svg>
+        </button>
+        <button class="lightbox-nav lightbox-prev" id="lightboxPrev">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="15 18 9 12 15 6"></polyline>
+            </svg>
+        </button>
+        <button class="lightbox-nav lightbox-next" id="lightboxNext">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="9 6 15 12 9 18"></polyline>
+            </svg>
+        </button>
+        <div class="lightbox-content">
+            <img src="" alt="" id="lightboxImage">
+            <p class="lightbox-caption" id="lightboxCaption"></p>
+        </div>
+        <div class="lightbox-counter" id="lightboxCounter"></div>
+    </div>
+
+    <!-- ==================== -->
+    <!-- CONTACT OVERLAY      -->
+    <!-- ==================== -->
+    <div class="overlay" id="contactOverlay">
+        <button class="overlay-close" data-close="contactOverlay">
+            <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5">
+                <line x1="1" y1="1" x2="13" y2="13"></line>
+                <line x1="13" y1="1" x2="1" y2="13"></line>
+            </svg>
+            Close
+        </button>
+        <div class="overlay-content">
+            <div class="overlay-header">
+                <h1 class="overlay-title">Get in <em>Touch</em></h1>
+                <p class="overlay-subtitle">
+                    Interested in our research or collaboration opportunities? 
+                    We'd love to hear from you.
+                </p>
+            </div>
+            
+            <div class="overlay-grid">
+                <div class="contact-info">
+                    <div class="contact-block">
+                        <h3>Email</h3>
+                        <p>
+                            <a href="mail:kiwoong">kiwoong@cbnu.ac.kr</a>
+                        </p>
+                    </div>
+                    
+                    <div class="contact-block">
+                        <h3>Tel.</h3>
+                        <p>
+                            <a href="tel:+82-43-261-2269">+82 043-261-2277</a>
+                        </p>
+                    </div>
+                    
+                    <div class="contact-block">
+                        <h3>Location</h3>
+                        <address>
+                            <a href="https://maps.google.com/maps?q=Chungbuk+National+University" target="_blank" rel="noopener">
+                                Room 249, Building S1-1<br>
+                                College of Natural Sciences<br>
+                                Chungbuk National University<br>
+                                1, Chungdae-ro, Seowon-gu<br>
+                                Cheongju-si, Chungbuk 28644<br>
+                                South Korea
+                            </a>
+                        </address>
+                    </div>
+
+                    <!--div class="contact-block">
+                        <h3>Follow Us</h3>
+                        <div class="contact-social">
+                            <a href="https://instagram.com" target="_blank" rel="noopener">Instagram</a>
+                            <a href="https://github.com" target="_blank" rel="noopener">GitHub</a>
+                        </div>
+                    </div-->
+
+                </div>
+                
+                <form class="contact-form" id="contactForm" onsubmit="sendMail(event)">
+                    <div class="form-group">
+                        <label for="name">Name</label>
+                        <input type="text" id="name" name="name" placeholder="Your name" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" placeholder="your@email.com" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="subject">Subject</label>
+                        <input type="text" id="subject" name="subject" placeholder="Research inquiry, Collaboration, etc.">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="message">Message</label>
+                        <textarea id="message" name="message" placeholder="Tell us about your inquiry..." required></textarea>
+                    </div>
+                    
+                    <button type="submit" class="form-submit">Send Message</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== -->
+    <!-- HEADER               -->
+    <!-- ==================== -->
     <header>
-        <a href="index.html" class="logo">QMET</a>
+        <a href="/" class="logo">QMET</a>
         <nav>
-            <a href="about.html">about</a>
-            <a href="research.html">research</a>
-            <a href="news.html">news</a>
-            <a href="team.html">team</a>
-            <a href="publications.html">publications</a>
-            <a href="contact.html">contact</a>
+            <button data-overlay="aboutOverlay">About</button>
+            <button data-overlay="professorOverlay">Professor</button>
+            <button data-overlay="teamOverlay">Team</button>
+            <button data-overlay="publicationOverlay">Publication</button>
+            <button data-overlay="activityOverlay">Activity</button>
         </nav>
+        <button class="header-toggle" data-overlay="contactOverlay">Contact</button>
+        <button class="menu-toggle" aria-label="Toggle menu">Menu</button>
     </header>
 
-    <main>
+    <!-- ==================== -->
+    <!-- MAIN CONTENT         -->
+    <!-- ==================== -->
+    <main id="main-content">
         <section class="hero">
-            <p class="hero-subtitle">quantum metrology lab</p>
-            <h1 class="hero-title">For the Quantum World</h1>
-            
-            <a href="#" class="banner">
-                <span class="banner-tag">Open Position</span>
-                <span class="banner-text">Apply as Researcher</span>
-                <span class="banner-arrow">→</span>
-            </a>
-
-            <div class="stats-bar">
-                <div class="stat-item">
-                    <div class="stat-number">●</div>
-                    <div class="stat-label">Publications</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number">5</div>
-                    <div class="stat-label">Team Members</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number">5</div>
-                    <div class="stat-label">Active Projects</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number">●</div>
-                    <div class="stat-label">Collaborations</div>
-                </div>
-            </div>
+            <h1 class="hero-title">Beyond the Standard <em>Quantum</em> limit.</h1>
+            <div class="scroll-indicator">Scroll</div>
         </section>
 
-        <!-- About Section -->
-        <section class="about-section" id="about">
-            <div class="about-content">
-                <div class="about-text">
-                    <h2>Pioneering the future of quantum world</h2>
-                    <p>Our lab is dedicated to advancing the frontiers of computational intelligence through rigorous research and innovative applications. We focus on developing novel algorithms and systems that push the boundaries of what's possible in machine learning and AI.</p>
-                    <p>Founded in 2015, we have established ourselves as a leading research group in deep learning, computer vision, and natural language processing. Our work has been published in top-tier venues and has been adopted by industry partners worldwide.</p>
-                    <p>We believe in the power of interdisciplinary collaboration and maintain strong partnerships with leading institutions and companies around the globe.</p>
-                </div>
-                <div class="about-highlights">
-                    <div class="highlight-item">
-                        <div class="highlight-title">🎯 Mission</div>
-                        <div class="highlight-desc">To advance fundamental AI research while solving real-world problems through practical applications</div>
-                    </div>
-                    <div class="highlight-item">
-                        <div class="highlight-title">💡 Vision</div>
-                        <div class="highlight-desc">Creating intelligent systems that augment human capabilities and address societal challenges</div>
-                    </div>
-                    <div class="highlight-item">
-                        <div class="highlight-title">🤝 Values</div>
-                        <div class="highlight-desc">Excellence, collaboration, innovation, and ethical responsibility in all our research endeavors</div>
-                    </div>
-                </div>
+        <section class="intro">
+            <div class="intro-content">
+                <p class="intro-text">
+                    From quantum theory to engineered reality, quantum metrology laboratory transforms 
+                    invisible signals into clear insights - Designing the Hardware for Quantum Insight.
+                </p>
+                <button class="intro-link" data-overlay="insideLabOverlay">Inside the Lab</button>
             </div>
+            <div></div>
         </section>
 
-        <!-- Research Areas -->
-        <section class="research-areas-section">
-            <div class="section-header">
-                <span class="section-title">Research Areas</span>
+        <section class="values">
+            <div class="values-grid">
+                <h2 class="value-item">Theory.</h2>
+                <h2 class="value-item">Experiment.</h2>
+                <h2 class="value-item">Realization.</h2>
             </div>
-            
-            <div class="areas-grid">
-                <div class="area-card">
-                    <div class="area-icon">🧠</div>
-                    <h3 class="area-title">Optical Pump Magnetometer - Magnetoencephlography(OPM-MEG)</h3>
-                    <p class="area-desc">Novel architectures and training methods for neural networks, including transformers and attention mechanisms</p>
-                </div>
-                <div class="area-card">
-                    <div class="area-icon">👁️</div>
-                    <h3 class="area-title">NV(Nitrogen-vacancy) center</h3>
-                    <p class="area-desc">Visual understanding, object detection, semantic segmentation, and 3D scene reconstruction</p>
-                </div>
-                <div class="area-card">
-                    <div class="area-icon">💬</div>
-                    <h3 class="area-title">Natural Language</h3>
-                    <p class="area-desc">Language models, text generation, machine translation, and semantic understanding</p>
-                </div>
-                <div class="area-card">
-                    <div class="area-icon">🤖</div>
-                    <h3 class="area-title">Robotics & Control</h3>
-                    <p class="area-desc">Embodied AI, manipulation, navigation, and human-robot interaction systems</p>
-                </div>
-                <div class="area-card">
-                    <div class="area-icon">🎮</div>
-                    <h3 class="area-title">Reinforcement Learning</h3>
-                    <p class="area-desc">Policy optimization, multi-agent systems, and safe exploration strategies</p>
-                </div>
-                <div class="area-card">
-                    <div class="area-icon">🔬</div>
-                    <h3 class="area-title">ML Theory</h3>
-                    <p class="area-desc">Theoretical foundations, optimization, generalization, and interpretability</p>
-                </div>
+            <p class="values-description">
+                Rooted in fundamental physics, we span the entire arc of discovery — 
+                from theoretical modeling to the fabrication of fully integrated hardware modules.
+            </p>
+            <div class="values-cta">
+                <button data-overlay="researchOverlay">Explore our research →</button>
             </div>
-        </section>
-
-        <!-- Projects Section -->
-        <section class="projects-section" id="research">
-            <div class="section-header">
-                <span class="section-title">Selected Research Projects</span>
-            </div>
-            
-            <div class="projects-grid">
-                <a href="#" class="project-card">
-                    <div class="project-meta">
-                        <span class="project-tag">Neural Networks</span>
-                        <span class="project-year">2024</span>
-                    </div>
-                    <div class="project-content">
-                        <h3 class="project-title">Adaptive Learning Systems</h3>
-                        <p class="project-desc">Deep reinforcement learning for autonomous decision-making in complex environments</p>
-                        <span class="view-more">View more →</span>
-                    </div>
-                </a>
-
-                <a href="#" class="project-card">
-                    <div class="project-meta">
-                        <span class="project-tag">Computer Vision</span>
-                        <span class="project-year">2024</span>
-                    </div>
-                    <div class="project-content">
-                        <h3 class="project-title">Visual Understanding</h3>
-                        <p class="project-desc">Multi-modal perception and scene understanding for robotic applications</p>
-                        <span class="view-more">View more →</span>
-                    </div>
-                </a>
-
-                <a href="#" class="project-card">
-                    <div class="project-meta">
-                        <span class="project-tag">NLP</span>
-                        <span class="project-year">2024</span>
-                    </div>
-                    <div class="project-content">
-                        <h3 class="project-title">Language Models</h3>
-                        <p class="project-desc">Large-scale language models for domain-specific knowledge extraction</p>
-                        <span class="view-more">View more →</span>
-                    </div>
-                </a>
-
-                <a href="#" class="project-card">
-                    <div class="project-meta">
-                        <span class="project-tag">Optimization</span>
-                        <span class="project-year">2023</span>
-                    </div>
-                    <div class="project-content">
-                        <h3 class="project-title">Meta-Learning</h3>
-                        <p class="project-desc">Few-shot learning algorithms for rapid adaptation across tasks</p>
-                        <span class="view-more">View more →</span>
-                    </div>
-                </a>
-
-                <a href="#" class="project-card">
-                    <div class="project-meta">
-                        <span class="project-tag">Robotics</span>
-                        <span class="project-year">2024</span>
-                    </div>
-                    <div class="project-content">
-                        <h3 class="project-title">Embodied AI</h3>
-                        <p class="project-desc">Physical interaction and manipulation in unstructured environments</p>
-                        <span class="view-more">View more →</span>
-                    </div>
-                </a>
-
-                <a href="#" class="project-card">
-                    <div class="project-meta">
-                        <span class="project-tag">Theory</span>
-                        <span class="project-year">2023</span>
-                    </div>
-                    <div class="project-content">
-                        <h3 class="project-title">Interpretability</h3>
-                        <p class="project-desc">Understanding neural network decisions through mechanistic analysis</p>
-                        <span class="view-more">View more →</span>
-                    </div>
-                </a>
-            </div>
-        </section>
-
-        <!-- News Section -->
-        <section class="news-section" id="news">
-            <div class="section-header">
-                <span class="section-title">Latest News</span>
-            </div>
-            
-            <div class="news-grid">
-                <a href="#" class="news-item">
-                    <div class="news-image">📰</div>
-                    <div class="news-content">
-                        <div class="news-date">Jan 15, 2024</div>
-                        <h3 class="news-title">Paper Accepted at NeurIPS 2024</h3>
-                        <p class="news-excerpt">Our work on hierarchical attention mechanisms has been accepted for presentation at NeurIPS 2024.</p>
-                    </div>
-                </a>
-
-                <a href="#" class="news-item">
-                    <div class="news-image">🏆</div>
-                    <div class="news-content">
-                        <div class="news-date">Dec 20, 2023</div>
-                        <h3 class="news-title">Best Paper Award at ICML</h3>
-                        <p class="news-excerpt">Congratulations to our team for receiving the Best Paper Award at ICML for our meta-learning research.</p>
-                    </div>
-                </a>
-
-                <a href="#" class="news-item">
-                    <div class="news-image">🎓</div>
-                    <div class="news-content">
-                        <div class="news-date">Nov 10, 2023</div>
-                        <h3 class="news-title">New PhD Positions Available</h3>
-                        <p class="news-excerpt">We are looking for motivated PhD students to join our team. Multiple positions available starting Fall 2024.</p>
-                    </div>
-                </a>
-
-                <a href="#" class="news-item">
-                    <div class="news-image">🤝</div>
-                    <div class="news-content">
-                        <div class="news-date">Oct 5, 2023</div>
-                        <h3 class="news-title">Industry Partnership Announced</h3>
-                        <p class="news-excerpt">New collaboration with leading tech companies to advance AI research and practical applications.</p>
-                    </div>
-                </a>
-            </div>
-        </section>
-
-        <!-- Team Section -->
-        <section class="team-section" id="team">
-            <div class="section-header">
-                <span class="section-title">Team</span>
-            </div>
-            
-            <div class="team-grid">
-                <div class="team-member">
-                    <div class="member-avatar">👨‍🏫</div>
-                    <h3 class="member-name">Prof. Kiwoong Kim</h3>
-                    <p class="member-role">Principal Investigator</p>
-                    <p class="member-bio">Leading research in deep learning and computational intelligence with focus on real-world applications.</p>
-                    <div class="member-links">
-                        <a href="#" class="member-link">Scholar</a>
-                        <a href="#" class="member-link">GitHub</a>
-                    </div>
-                </div>
-
-                <div class="team-member">
-                    <div class="member-avatar">👩‍🔬</div>
-                    <h3 class="member-name">SeongHyeon Park</h3>
-                    <p class="member-role">Ph.D student</p>
-                    <p class="member-bio">Specializing in computer vision and multi-modal learning systems.</p>
-                    <div class="member-links">
-                        <a href="#" class="member-link">Scholar</a>
-                        <a href="#" class="member-link">GitHub</a>
-                    </div>
-                </div>
-
-                <div class="team-member">
-                    <div class="member-avatar">👨‍💻</div>
-                    <h3 class="member-name">JeDeok Yang</h3>
-                    <p class="member-role">Master student</p>
-                    <p class="member-bio">Researching reinforcement learning algorithms for autonomous systems.</p>
-                    <div class="member-links">
-                        <a href="#" class="member-link">Scholar</a>
-                        <a href="#" class="member-link">GitHub</a>
-                    </div>
-                </div>
-
-                <div class="team-member">
-                    <div class="member-avatar">👩‍💻</div>
-                    <h3 class="member-name">Choi Yuna</h3>
-                    <p class="member-role">PhD Candidate</p>
-                    <p class="member-bio">Focusing on natural language processing and knowledge graphs.</p>
-                    <div class="member-links">
-                        <a href="#" class="member-link">Scholar</a>
-                        <a href="#" class="member-link">GitHub</a>
-                    </div>
-                </div>
-
-                <div class="team-member">
-                    <div class="member-avatar">👨‍🎓</div>
-                    <h3 class="member-name">Jung Seunghyun</h3>
-                    <p class="member-role">MS Student</p>
-                    <p class="member-bio">Working on efficient neural network architectures and model compression.</p>
-                    <div class="member-links">
-                        <a href="#" class="member-link">Scholar</a>
-                        <a href="#" class="member-link">GitHub</a>
-                    </div>
-                </div>
-
-                <div class="team-member">
-                    <div class="member-avatar">👩‍🎓</div>
-                    <h3 class="member-name">Han Minji</h3>
-                    <p class="member-role">MS Student</p>
-                    <p class="member-bio">Exploring applications of generative models in creative domains.</p>
-                    <div class="member-links">
-                        <a href="#" class="member-link">Scholar</a>
-                        <a href="#" class="member-link">GitHub</a>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Publications Section -->
-        <section class="publications-section" id="publications">
-            <div class="section-header">
-                <span class="section-title">Recent Publications</span>
-            </div>
-            
-            <div class="publication-list">
-                <a href="#" class="publication-item">
-                    <span class="pub-year">2024</span>
-                    <div>
-                        <h4 class="pub-title">Hierarchical Attention for Multi-Scale Feature Learning</h4>
-                        <p class="pub-authors">Kim M., Park S., Lee J.</p>
-                    </div>
-                    <span class="pub-venue">NeurIPS</span>
-                </a>
-
-                <a href="#" class="publication-item">
-                    <span class="pub-year">2024</span>
-                    <div>
-                        <h4 class="pub-title">Efficient Knowledge Distillation in Large Language Models</h4>
-                        <p class="pub-authors">Choi Y., Kim M.</p>
-                    </div>
-                    <span class="pub-venue">ACL</span>
-                </a>
-
-                <a href="#" class="publication-item">
-                    <span class="pub-year">2024</span>
-                    <div>
-                        <h4 class="pub-title">Adaptive Policy Learning for Robotic Manipulation</h4>
-                        <p class="pub-authors">Lee J., Jung S., Kim M.</p>
-                    </div>
-                    <span class="pub-venue">ICRA</span>
-                </a>
-
-                <a href="#" class="publication-item">
-                    <span class="pub-year">2023</span>
-                    <div>
-                        <h4 class="pub-title">Self-Supervised Learning for Visual Representation</h4>
-                        <p class="pub-authors">Park S., Lee J., Kim M.</p>
-                    </div>
-                    <span class="pub-venue">CVPR</span>
-                </a>
-
-                <a href="#" class="publication-item">
-                    <span class="pub-year">2023</span>
-                    <div>
-                        <h4 class="pub-title">Meta-Learning with Adaptive Loss Functions</h4>
-                        <p class="pub-authors">Lee J., Kim M.</p>
-                    </div>
-                    <span class="pub-venue">ICML</span>
-                </a>
-
-                <a href="#" class="publication-item">
-                    <span class="pub-year">2023</span>
-                    <div>
-                        <h4 class="pub-title">Generative Models for Data Augmentation</h4>
-                        <p class="pub-authors">Han M., Choi Y., Kim M.</p>
-                    </div>
-                    <span class="pub-venue">ICCV</span>
-                </a>
-            </div>
-        </section>
-
-        <!-- Collaborations -->
-        <section class="collaborations-section">
-            <div class="section-header">
-                <span class="section-title">Collaborations & Partners</span>
-            </div>
-            
-            <div class="collaborators-grid">
-                <div class="collaborator-item">
-                    <div class="collaborator-logo">MIT</div>
-                    <div class="collaborator-name">Massachusetts Institute of Technology</div>
-                </div>
-                <div class="collaborator-item">
-                    <div class="collaborator-logo">Stanford</div>
-                    <div class="collaborator-name">Stanford University</div>
-                </div>
-                <div class="collaborator-item">
-                    <div class="collaborator-logo">CMU</div>
-                    <div class="collaborator-name">Carnegie Mellon University</div>
-                </div>
-                <div class="collaborator-item">
-                    <div class="collaborator-logo">Google</div>
-                    <div class="collaborator-name">Google Research</div>
-                </div>
-                <div class="collaborator-item">
-                    <div class="collaborator-logo">Meta</div>
-                    <div class="collaborator-name">Meta AI Research</div>
-                </div>
-                <div class="collaborator-item">
-                    <div class="collaborator-logo">OpenAI</div>
-                    <div class="collaborator-name">OpenAI</div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Gallery -->
-        <section class="gallery-section">
-            <div class="section-header">
-                <span class="section-title">Lab Gallery</span>
-            </div>
-            
-            <div class="gallery-grid">
-                <div class="gallery-item">🖥️</div>
-                <div class="gallery-item">🤖</div>
-                <div class="gallery-item">📊</div>
-                <div class="gallery-item">🎯</div>
-                <div class="gallery-item">🔬</div>
-                <div class="gallery-item">💡</div>
-            </div>
-        </section>
-
-        <!-- Newsletter Section -->
-        <section class="newsletter-section">
-            <h2 class="newsletter-title">Subscribe to our research updates</h2>
-            <form class="newsletter-form">
-                <input type="email" class="newsletter-input" placeholder="Enter your email">
-                <button type="submit" class="newsletter-button">Subscribe</button>
-            </form>
         </section>
     </main>
 
-    <footer id="contact">
+    <!-- ==================== -->
+    <!-- FOOTER               -->
+    <!-- ==================== -->
+    <footer>
         <div class="footer-grid">
-            <div class="footer-col">
-                <h4>Location</h4>
-                <p>Engineering Building 301</p>
-                <p>Seoul National University</p>
-                <p>08826, Seoul (KR)</p>
-            </div>
-            
-            <div class="footer-col">
-                <h4>Contact</h4>
-                <p><a href="/cdn-cgi/l/email-protection#f09c9192b09588919d809c95de939f9d"><span class="__cf_email__" data-cfemail="f4989596b4918c9599849891da979b99">[email&#160;protected]</span></a></p>
-                <p>+82 02 880 0000</p>
-            </div>
-            
-            <div class="footer-col">
-                <h4>Social</h4>
-                <a href="#">Github</a>
-                <a href="#">Google Scholar</a>
-                <a href="#">Twitter</a>
-                <a href="#">LinkedIn</a>
-            </div>
-
-            <div class="footer-col">
-                <h4>Resources</h4>
-                <a href="#">Publications</a>
-                <a href="#">Code</a>
-                <a href="#">Datasets</a>
-                <a href="#">Blog</a>
+            <div class="footer-location">
+                <h3>Quantum metrology laboratory</h3>
+                <address>
+                    <a href="https://maps.google.com/maps?q=Chungbuk+National+University" target="_blank" rel="noopener">
+                        Room 249, Building S1-1 (College of Natural Sciences)<br>
+                        Chungbuk National University<br>
+                        1, Chungdae-ro, Seowon-gu<br>
+                        Cheongju-si, Chungbuk 28644<br>
+                        South Korea
+                    </a>
+                </address>
             </div>
         </div>
-        
         <div class="footer-bottom">
-            <span class="copyright">© 2024 Computational Intelligence Lab. All rights reserved.</span>
+            <span>©2021. All rights reserved.</span>
+            <div class="footer-links">
+                <button data-overlay="contactOverlay">Contact</button>
+                <a href="/privacy">Hello</a>
+            </div>
         </div>
     </footer>
 
+    <!-- ==================== -->
+    <!-- JAVASCRIPT           -->
+    <!-- ==================== -->
     <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
-        // Theme toggle functionality
-        const themeToggle = document.getElementById('themeToggle');
-        const themeIcon = document.getElementById('themeIcon');
-        const htmlElement = document.documentElement;
+        // Mobile Menu Toggle
+        const menuToggle = document.querySelector('.menu-toggle');
+        const nav = document.querySelector('nav');
 
-        // Check for saved theme preference or default to 'light'
-        const currentTheme = localStorage.getItem('theme') || 'light';
-        htmlElement.setAttribute('data-theme', currentTheme);
-        updateThemeIcon(currentTheme);
-
-        themeToggle.addEventListener('click', () => {
-            const currentTheme = htmlElement.getAttribute('data-theme');
-            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-            
-            htmlElement.setAttribute('data-theme', newTheme);
-            localStorage.setItem('theme', newTheme);
-            updateThemeIcon(newTheme);
+        menuToggle.addEventListener('click', () => {
+            nav.classList.toggle('mobile-open');
         });
 
-        function updateThemeIcon(theme) {
-            themeIcon.textContent = theme === 'light' ? '🌙' : '☀️';
+        // Close mobile menu when clicking nav buttons
+        document.querySelectorAll('nav button').forEach(btn => {
+            btn.addEventListener('click', () => {
+                nav.classList.remove('mobile-open');
+            });
+        });
+
+        // Overlay System
+        const overlays = document.querySelectorAll('.overlay');
+        const overlayTriggers = document.querySelectorAll('[data-overlay]');
+        const overlayCloseButtons = document.querySelectorAll('.overlay-close');
+
+        function openOverlay(overlayId) {
+            const overlay = document.getElementById(overlayId);
+            if (overlay) {
+                overlay.classList.add('active');
+                document.body.classList.add('no-scroll');
+            }
         }
 
-        // Newsletter form
-        const newslett
+        function closeOverlay(overlayId) {
+            const overlay = document.getElementById(overlayId);
+            if (overlay) {
+                overlay.classList.remove('active');
+                document.body.classList.remove('no-scroll');
+            }
+        }
+
+        function closeAllOverlays() {
+            overlays.forEach(overlay => {
+                overlay.classList.remove('active');
+            });
+            document.body.classList.remove('no-scroll');
+        }
+
+        // Trigger buttons
+        overlayTriggers.forEach(trigger => {
+            trigger.addEventListener('click', (e) => {
+                e.preventDefault();
+                const overlayId = trigger.getAttribute('data-overlay');
+                openOverlay(overlayId);
+            });
+        });
+
+        // Close buttons
+        overlayCloseButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const overlayId = btn.getAttribute('data-close');
+                closeOverlay(overlayId);
+            });
+        });
+
+        // Close on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeAllOverlays();
+            }
+        });
+
+        // Close when clicking overlay background
+        overlays.forEach(overlay => {
+            overlay.addEventListener('click', (e) => {
+                if (e.target === overlay) {
+                    closeAllOverlays();
+                }
+            });
+        });
+
+        // News Card Click Handler
+        document.querySelectorAll('.activity-card.has-news').forEach(card => {
+            card.addEventListener('click', (e) => {
+                // Don't navigate if clicking on carousel
+                if (e.target.closest('.activity-carousel')) {
+                    return;
+                }
+                const newsUrl = card.getAttribute('data-news-url');
+                if (newsUrl) {
+                    window.open(newsUrl, '_blank', 'noopener');
+                }
+            });
+        });
+
+        // Carousel - Clone slides for infinite loop
+        document.querySelectorAll('.activity-carousel').forEach(carousel => {
+            const track = carousel.querySelector('.carousel-track');
+            const slides = track.querySelectorAll('.carousel-slide');
+            
+            // Clone all slides and append to track for seamless infinite scroll
+            slides.forEach(slide => {
+                const clone = slide.cloneNode(true);
+                track.appendChild(clone);
+            });
+        });
+
+        function sendMail(event) {
+            event.preventDefault();
+
+            const name    = document.getElementById('name').value;
+            const email   = document.getElementById('email').value;
+            const subject = document.getElementById('subject').value || 'Contact from QMET website';
+            const message = document.getElementById('message').value;
+
+            const to = 'kiwoong@cbnu.ac.kr';
+
+            // 줄바꿈은 그냥 \n으로 쓰고, 나중에 encodeURIComponent에 맡김
+            const bodyText =
+                'Name: ' + name + '\n' +
+                'Email: ' + email + '\n\n' +
+                message;
+
+            const mailtoLink = 'mailto:' + encodeURIComponent(to)
+                + '?subject=' + encodeURIComponent(subject)
+                + '&body=' + encodeURIComponent(bodyText);
+
+            window.location.href = mailtoLink;
+        }
+
+        // ==================== 
+        // IMAGE GALLERY & LIGHTBOX
+        // ====================
+        (function() {
+            const lightbox = document.getElementById('imageLightbox');
+            const lightboxImage = document.getElementById('lightboxImage');
+            const lightboxCaption = document.getElementById('lightboxCaption');
+            const lightboxCounter = document.getElementById('lightboxCounter');
+            const lightboxClose = document.getElementById('lightboxClose');
+            const lightboxPrev = document.getElementById('lightboxPrev');
+            const lightboxNext = document.getElementById('lightboxNext');
+            
+            let currentGalleryImages = [];
+            let currentIndex = 0;
+            
+            // Collect all lightbox images
+            function getAllLightboxImages(clickedImg) {
+                // Find the parent research card
+                const card = clickedImg.closest('.research-card');
+                if (card) {
+                    // Get all images within this card's gallery
+                    return Array.from(card.querySelectorAll('[data-lightbox]'));
+                }
+                return [clickedImg];
+            }
+            
+            // Open lightbox
+            function openLightbox(img) {
+                currentGalleryImages = getAllLightboxImages(img);
+                currentIndex = currentGalleryImages.indexOf(img);
+                if (currentIndex === -1) currentIndex = 0;
+                
+                updateLightboxImage();
+                lightbox.classList.add('active');
+                document.body.style.overflow = 'hidden';
+                
+                // Show/hide nav buttons based on image count
+                if (currentGalleryImages.length <= 1) {
+                    lightboxPrev.style.display = 'none';
+                    lightboxNext.style.display = 'none';
+                    lightboxCounter.style.display = 'none';
+                } else {
+                    lightboxPrev.style.display = 'flex';
+                    lightboxNext.style.display = 'flex';
+                    lightboxCounter.style.display = 'block';
+                }
+            }
+            
+            // Close lightbox
+            function closeLightbox() {
+                lightbox.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+            
+            // Update lightbox image
+            function updateLightboxImage() {
+                const img = currentGalleryImages[currentIndex];
+                lightboxImage.src = img.src;
+                lightboxCaption.textContent = img.alt || '';
+                lightboxCounter.textContent = `${currentIndex + 1} / ${currentGalleryImages.length}`;
+            }
+            
+            // Navigate
+            function navigate(direction) {
+                currentIndex += direction;
+                if (currentIndex < 0) currentIndex = currentGalleryImages.length - 1;
+                if (currentIndex >= currentGalleryImages.length) currentIndex = 0;
+                updateLightboxImage();
+            }
+            
+            // Event listeners for lightbox images
+            document.querySelectorAll('[data-lightbox]').forEach(img => {
+                img.addEventListener('click', () => openLightbox(img));
+            });
+            
+            // Close button
+            lightboxClose.addEventListener('click', closeLightbox);
+            
+            // Navigation buttons
+            lightboxPrev.addEventListener('click', () => navigate(-1));
+            lightboxNext.addEventListener('click', () => navigate(1));
+            
+            // Click outside to close
+            lightbox.addEventListener('click', (e) => {
+                if (e.target === lightbox) closeLightbox();
+            });
+            
+            // Keyboard navigation
+            document.addEventListener('keydown', (e) => {
+                if (!lightbox.classList.contains('active')) return;
+                
+                if (e.key === 'Escape') closeLightbox();
+                if (e.key === 'ArrowLeft') navigate(-1);
+                if (e.key === 'ArrowRight') navigate(1);
+            });
+            
+            // Thumbnail click to change main image
+            document.querySelectorAll('.gallery-thumbs img').forEach(thumb => {
+                thumb.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const gallery = this.closest('.research-card-gallery');
+                    const mainImg = gallery.querySelector('.gallery-main img');
+                    
+                    // Update main image
+                    mainImg.src = this.src;
+                    mainImg.alt = this.alt;
+                    
+                    // Update active state
+                    gallery.querySelectorAll('.gallery-thumbs img').forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+            
+            // Double-click on main image to open lightbox
+            document.querySelectorAll('.gallery-main img').forEach(img => {
+                img.addEventListener('click', () => openLightbox(img));
+            });
+        })();
+    </script>
+</body>
+</html>
